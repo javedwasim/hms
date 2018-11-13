@@ -3204,4 +3204,15 @@ class model_hms extends CI_Model {
         }
     }
 
+    public function get_cities(){
+        $this->db->select('*');
+        $this->db->from('cities');
+        $result = $this->db->get();
+        if($result) {
+            return $result->result_array();
+        } else {
+            return array();
+        }
+    }
+
 }

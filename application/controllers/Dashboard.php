@@ -31,13 +31,19 @@ class dashboard extends CI_Controller {
     }
 
     public function new_admission() {
+
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, ALLOW_USER_TO_ADMIT);
         if ($access_checker == 1) {
             $data['reg_num'] = $this->model_hms->get_regNo();
-            $this->load->view('new_admission', $data);
+            $data['cities'] = $this->model_hms->get_cities();
+            $json['result_html'] = $this->load->view('admission/add', $data,true);
         } else {
             $this->insufficient_privileges();
+        }
+
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
         }
     }
 
