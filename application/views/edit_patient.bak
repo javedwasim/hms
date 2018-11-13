@@ -1,0 +1,684 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+$base_url = load_class('Config')->config['base_url'];
+echo '<input type="hidden" id="base" value="' . $base_url . '">';
+if ($this->input->get("success") == "true") {
+    echo '<div style="position: fixed;top: 60px;right: 20px; z-index: 1030;" class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><h4><i class="icon fa fa-check"></i> Success!</h4>Information has been saved successfully!</div>';
+}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Patient record | <?php echo SITE_TITLE_TEXT; ?></title>
+    <?php $this->load->view('header'); ?>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+    <?php $this->load->view('main_header'); ?> <!-- Left side column. contains the logo and sidebar -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                Edit Patient
+                <small></small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="<?php echo base_url('/dashboard'); ?>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="<?php echo base_url('/dashboard/edit_patient/'); ?>"> Edit Patient</a></li>
+
+            </ol>
+            <br>
+            <div class="row">
+                <div class="col-md-4 col-sm-6 col-xs-12" style="float: right;">
+                    <div class="info-box">
+            <span class="info-box-icon bg-green"><i class="fa fa-bed" aria-hidden="true"></i>
+</span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Admission Statistics</span>
+                            <span style="font-size: 20px"><?php $patcount = $this->model_hms->patient_counter(); if(!empty($patcount)){ echo $patcount->counter; } ?></span> Patients / <span
+                                        style="font-size: 20px"><?php $bedcount = $this->model_hms->bed_counter(); if(!empty($bedcount)){ echo $bedcount->counter; } ?></span> Bed(s)</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+            </div>
+        </section>
+        <!-- Main content -->
+        <section class="content">
+            <?php if (!empty($patient_list)) {
+                foreach ($patient_list as $p_key) { ?>
+                    <form action="<?php echo base_url('dashboard/update'); ?>" class="submit-form" method="post">
+
+                        <div class="box  box-primary">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Patient Personal Information</h3>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                </div>
+                            </div><!-- /.box-header -->
+                            <div class="box-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>MR#</label>
+
+                                            <input type="hidden" name="reg" value="<?php echo $p_key['regNo']; ?>">
+                                            <input class="form-control" required="required" type="text"
+                                                   required="required" name="RegNumber" id="regName" placeholder="MR#"
+                                                   value="<?php echo $p_key['regNo']; ?>" disabled>
+                                        </div><!-- /.form-group -->
+                                    </div><!-- /.col -->
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Name</label>
+                                            <input class="form-control" required="required" required="required"
+                                                   type="text" id="patName" name="patName" placeholder="Type Name"
+                                                   value="<?php echo $p_key['patName']; ?>">
+                                        </div><!-- /.form-group -->
+
+                                    </div><!-- /.col -->
+                                    <div class="col-md-3">
+                                        <label>Next of Kin</label>
+                                        <div class="form-group">
+                                            <div class="col-md-4" style="padding: 0">
+                                                <select required="required" class="form-control next-of-kin"
+                                                        style="width: 100%;" name="patNoKType" tabindex="4">
+                                                    <option></option>
+                                                    <?php if ($p_key['patNoKType'] == "S/O") { ?>
+                                                        <option value="S/O" selected>S/O</option>
+                                                        <option value="D/O">D/O</option>
+                                                        <option value="W/O">W/O</option>
+                                                    <?php } ?>
+                                                    <?php if ($p_key['patNoKType'] == "D/O") { ?>
+                                                        <option value="S/O">S/O</option>
+                                                        <option value="D/O" selected>D/O</option>
+                                                        <option value="W/O">W/O</option>
+                                                    <?php } ?>
+                                                    <?php if ($p_key['patNoKType'] == "W/O") { ?>
+                                                        <option value="S/O">S/O</option>
+                                                        <option value="D/O">D/O</option>
+                                                        <option value="W/O" selected>W/O</option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-8" style="padding: 0">
+                                                <input class="form-control" required="required" type="text"
+                                                       id="guardianName" name="patNoKName"
+                                                       placeholder="Type S/O, D/O, W/O"
+                                                       value="<?php echo $p_key['patNoK']; ?>">
+                                            </div>
+                                        </div><!-- /.form-group -->
+                                    </div><!-- /.col -->
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+
+                                            <label>Date of Birth</label>
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+
+                                                <input type="text" class="form-control" id="datepicker" name="patDoB"
+                                                       placeholder="e.g. DD-MM-YYYY"
+                                                       value="<?php echo $p_key['patDoB']; ?>">
+
+                                            </div><!-- /.form-group -->
+                                        </div><!-- /.col -->
+                                    </div>
+                                </div>
+                                <div class="row">
+
+                                    <div class="col-md-3">
+
+                                        <div class="form-group">
+                                            <label>Age</label>
+
+                                            <input class="form-control" required="required" type="text" name="patAge"
+                                                   id="patAge" placeholder="Age"
+                                                   value="<?php echo $p_key['patAge']; ?>">
+
+                                        </div>
+                                    </div><!-- /.col -->
+
+                                    <div class="col-md-3">
+                                        <label>Select Blood Group</label>
+                                        <div class="form-group">
+                                            <select required="required" class="form-control bld-grp"
+                                                    style="width: 100%;" tabindex="4" name="patBldGrp">
+                                                <option></option>
+                                                <?php if ($p_key['patBldGrp'] == "A+VE") { ?>
+                                                    <option value="A+VE" selected>A+VE</option>
+                                                    <option value="A-VE">A-VE</option>
+                                                    <option value="B+VE">B+VE</option>
+                                                    <option value="B-VE">B-VE</option>
+                                                    <option value="AB+VE">AB+VE</option>
+                                                    <option value="AB-VE">AB-VE</option>
+                                                    <option value="O+VE">O+VE</option>
+                                                    <option value="O-VE">O-VE</option>
+                                                <?php } ?>
+                                                <?php if ($p_key['patBldGrp'] == "A-VE") { ?>
+                                                    <option value="A+VE">A+VE</option>
+                                                    <option value="A-VE" selected>A-VE</option>
+                                                    <option value="B+VE">B+VE</option>
+                                                    <option value="B-VE">B-VE</option>
+                                                    <option value="AB+VE">AB+VE</option>
+                                                    <option value="AB-VE">AB-VE</option>
+                                                    <option value="O+VE">O+VE</option>
+                                                    <option value="O-VE">O-VE</option>
+                                                <?php } ?>
+                                                <?php if ($p_key['patBldGrp'] == "B+VE") { ?>
+                                                    <option value="A+VE">A+VE</option>
+                                                    <option value="A-VE">A-VE</option>
+                                                    <option value="B+VE" selected>B+VE</option>
+                                                    <option value="B-VE">B-VE</option>
+                                                    <option value="AB+VE">AB+VE</option>
+                                                    <option value="AB-VE">AB-VE</option>
+                                                    <option value="O+VE">O+VE</option>
+                                                    <option value="O-VE">O-VE</option>
+                                                <?php } ?>
+                                                <?php if ($p_key['patBldGrp'] == "B-VE") { ?>
+                                                    <option value="A+VE">A+VE</option>
+                                                    <option value="A-VE">A-VE</option>
+                                                    <option value="B+VE">B+VE</option>
+                                                    <option value="B-VE" selected>B-VE</option>
+                                                    <option value="AB+VE">AB+VE</option>
+                                                    <option value="AB-VE">AB-VE</option>
+                                                    <option value="O+VE">O+VE</option>
+                                                    <option value="O-VE">O-VE</option>
+                                                <?php } ?>
+                                                <?php if ($p_key['patBldGrp'] == "B-VE") { ?>
+                                                    <option value="A+VE">A+VE</option>
+                                                    <option value="A-VE">A-VE</option>
+                                                    <option value="B+VE">B+VE</option>
+                                                    <option value="B-VE" selected>B-VE</option>
+                                                    <option value="AB+VE">AB+VE</option>
+                                                    <option value="AB-VE">AB-VE</option>
+                                                    <option value="O+VE">O+VE</option>
+                                                    <option value="O-VE">O-VE</option>
+                                                <?php } ?>
+                                                <?php if ($p_key['patBldGrp'] == "AB+VE") { ?>
+                                                    <option value="A+VE">A+VE</option>
+                                                    <option value="A-VE">A-VE</option>
+                                                    <option value="B+VE">B+VE</option>
+                                                    <option value="B-VE">B-VE</option>
+                                                    <option value="AB+VE" selected>AB+VE</option>
+                                                    <option value="AB-VE">AB-VE</option>
+                                                    <option value="O+VE">O+VE</option>
+                                                    <option value="O-VE">O-VE</option>
+                                                <?php } ?>
+                                                <?php if ($p_key['patBldGrp'] == "AB-VE") { ?>
+                                                    <option value="A+VE">A+VE</option>
+                                                    <option value="A-VE">A-VE</option>
+                                                    <option value="B+VE">B+VE</option>
+                                                    <option value="B-VE">B-VE</option>
+                                                    <option value="AB+VE">AB+VE</option>
+                                                    <option value="AB-VE" selected>AB-VE</option>
+                                                    <option value="O+VE">O+VE</option>
+                                                    <option value="O-VE">O-VE</option>
+                                                <?php } ?>
+                                                <?php if ($p_key['patBldGrp'] == "O+VE") { ?>
+                                                    <option value="A+VE">A+VE</option>
+                                                    <option value="A-VE">A-VE</option>
+                                                    <option value="B+VE">B+VE</option>
+                                                    <option value="B-VE">B-VE</option>
+                                                    <option value="AB+VE">AB+VE</option>
+                                                    <option value="AB-VE">AB-VE</option>
+                                                    <option value="O+VE" selected>O+VE</option>
+                                                    <option value="O-VE">O-VE</option>
+                                                <?php } ?>
+                                                <?php if ($p_key['patBldGrp'] == "O-VE") { ?>
+                                                    <option value="A+VE">A+VE</option>
+                                                    <option value="A-VE">A-VE</option>
+                                                    <option value="B+VE">B+VE</option>
+                                                    <option value="B-VE">B-VE</option>
+                                                    <option value="AB+VE">AB+VE</option>
+                                                    <option value="AB-VE">AB-VE</option>
+                                                    <option value="O+VE">O+VE</option>
+                                                    <option value="O-VE" selected>O-VE</option>
+                                                <?php } ?>
+
+                                            </select>
+                                        </div><!-- /.form-group -->
+                                    </div><!-- /.col -->
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Disease</label>
+
+                                            <?php if ($p_key['patDisease_id'] = "1") { ?>
+                                                <select required="required" class="form-control disease"
+                                                        style="width: 100%;" tabindex="4" name="patDisease">
+                                                    <option></option>
+                                                    <option value="1" selected>1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                    <option value="6">6</option>
+                                                </select>
+                                            <?php } ?>
+                                        </div><!-- /.form-group -->
+                                    </div><!-- /.col -->
+                                    <div class="col-md-3">
+
+                                        <div class="form-group">
+                                            <label>Sex</label>
+                                            <br>
+                                            <?php if ($p_key['patSex'] == "Male") { ?>
+                                                <input type="radio" required="required" name="sex" class="custom-radio"
+                                                       id="sex-male" value="Male" checked><label class="radio-labels">
+                                                    Male</label>
+                                                <input type="radio" required="required" name="sex" class="custom-radio"
+                                                       id="sex-female" value="Female"><label class="radio-labels">
+                                                    Female</label>
+                                                <input type="radio" required="required" name="sex" class="custom-radio"
+                                                       id="sex-other" value="Other"><label class="radio-labels">
+                                                    Other</label>
+                                            <?php } ?>
+                                            <?php if ($p_key['patSex'] == "Female") { ?>
+                                                <input type="radio" required="required" name="sex" class="custom-radio"
+                                                       id="sex-male" value="Male"><label class="radio-labels">
+                                                    Male</label>
+                                                <input type="radio" required="required" name="sex" class="custom-radio"
+                                                       id="sex-female" value="Female" checked><label
+                                                        class="radio-labels"> Female</label>
+                                                <input type="radio" required="required" name="sex" class="custom-radio"
+                                                       id="sex-other" value="Other"><label class="radio-labels">
+                                                    Other</label>
+                                            <?php } ?>
+                                            <?php if ($p_key['patSex'] == "Other") { ?>
+                                                <input type="radio" required="required" name="sex" class="custom-radio"
+                                                       id="sex-male" value="Male"><label class="radio-labels">
+                                                    Male</label>
+                                                <input type="radio" required="required" name="sex" class="custom-radio"
+                                                       id="sex-female" value="Female" checked><label
+                                                        class="radio-labels"> Female</label>
+                                                <input type="radio" required="required" name="sex" class="custom-radio"
+                                                       id="sex-other" value="Other" checked><label class="radio-labels">
+                                                    Other</label>
+                                            <?php } ?>
+                                        </div><!-- /.form-group -->
+                                    </div><!-- /.col -->
+                                </div><!-- /.row -->
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>CNIC</label>
+                                            <input class="form-control" required="required" type="text"
+                                                   required="required" name="patCnic" id="cnic"
+                                                   placeholder="Type CNIC number"
+                                                   value="<?php echo $p_key['patCNIC']; ?>">
+                                        </div><!-- /.form-group -->
+                                    </div><!-- /.col -->
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+
+                                            <label>Address</label>
+                                            <input type="text" class="form-control" required="required" id="address"
+                                                   name="patAddress" placeholder="Type Address"
+                                                   value="<?php echo $p_key['patAddress']; ?>">
+
+                                        </div><!-- /.form-group -->
+
+                                    </div><!-- /.col -->
+                                    <div class="col-md-3">
+                                        <label>Occupation</label>
+                                        <input class="form-control" required="required" type="text" id="occupation"
+                                               name="patOccupation" placeholder="Type Occupation"
+                                               value="<?php echo $p_key['patOccupation']; ?>">
+                                    </div><!-- /.col -->
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Phone</label>
+                                            <input class="form-control" required="required" type="phone" id="phone"
+                                                   name="patPhone" placeholder="Type Phone Number"
+                                                   value="<?php echo $p_key['patPhone']; ?>">
+                                        </div><!-- /.form-group -->
+
+                                    </div><!-- /.col -->
+                                </div>
+                                <div class="row">
+
+
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Entitled</label>
+                                            <br>
+                                            <?php if ($p_key['patEntitled'] == "Yes") { ?>
+                                                <input type="radio" required="required" name="entitled"
+                                                       class="custom-radio entitled-rad" id="entitled-true" value="Yes"
+                                                       checked><label class="radio-labels">Yes</label>
+                                                <input type="radio" required="required" name="entitled"
+                                                       class="custom-radio entitled-rad" id="entitled-false" value="No">
+                                                <label class="radio-labels"> No</label>
+                                            <?php } ?>
+                                            <?php if ($p_key['patEntitled'] == "No") { ?>
+                                                <input type="radio" required="required" name="entitled"
+                                                       class="custom-radio entitled-rad" id="entitled-true" value="Yes">
+                                                <label class="radio-labels">Yes</label>
+                                                <input type="radio" required="required" name="entitled"
+                                                       class="custom-radio entitled-rad" id="entitled-false" value="No"
+                                                       checked><label class="radio-labels"> No</label>
+                                            <?php } ?>
+                                            <br>
+                                            <label class="customlabel hide-label">(If Yes attach valid
+                                                documents)</label>
+                                        </div><!-- /.form-group -->
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Attach Photo (Optional)</label>
+                                        <?php if (!empty($error)) {
+                                            echo $error;
+                                        } ?>
+                                        <div class="fileinput fileinput-new" data-provides="fileinput">
+                                            <div class="fileinput-preview thumbnail" data-trigger="fileinput"
+                                                 style="width: 65px; height: 70px;">
+                                                <?php $var = $this->model_hms->get_pat_pic($p_key['regNo']);
+                                                if (!empty($var)) {
+                                                    ?>
+                                                    <img src="<?php echo base_url('assets/dist/img/patient_photo/') . $var->patient_pic_path; ?>"
+                                                         class="img-thumbnail">
+                                                <?php } else { ?>
+                                                <i class="fa fa-user" aria-hidden="true" style="font-size: 4em;"></i>
+                                                    <?php } ?>
+                                            </div>
+                                            <div style="display: inline;">
+                                        <span class="btn btn-default btn-file"><span
+                                                    class="fileinput-new">Select image</span><span
+                                                    class="fileinput-exists">Change</span>
+                                           <input type="file" name="patientphoto" size="20"/>
+                                        </span>
+                                                <a href="#" class="btn btn-default fileinput-exists"
+                                                   data-dismiss="fileinput">Remove</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /.box-body -->
+                        </div>
+                        <div class="box  box-primary">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Admission Information</h3>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                                class="fa fa-minus"></i></button>
+                                </div>
+                            </div><!-- /.box-header -->
+                            <div class="box-body">
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+
+                                        <label>Admitted Through</label>
+                                        <select required="required" class="form-control admitted-th"
+                                                style="width: 100%;" name="admitted-through">
+                                            <option></option>
+                                            <?php if ($p_key['patunit_Id'] == "OPD") { ?>
+                                                <option value="OPD" selected>OPD</option>
+                                                <option value="Emergency">Emergency</option>
+                                            <?php } ?>
+                                            <?php if ($p_key['patunit_Id'] == "Emergency") { ?>
+                                                <option value="OPD">OPD</option>
+                                                <option value="Emergency" selected>Emergency</option>
+                                            <?php } ?>
+                                        </select>
+
+                                    </div><!-- /.col -->
+
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Shifted From</label>
+                                        <input class="form-control" required="required" type="text"
+                                               name="patShiftedFrom" id="Disease" placeholder="Type Shifted From"
+                                               value="<?php echo $p_key['patShiftedFrom']; ?>">
+
+                                    </div>
+                                </div><!-- /.col -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Ward Number</label>
+                                        <select required="required" class="form-control ward-name" style="width: 100%;"
+                                                name="wardName">
+                                            <option></option>
+                                            <?php if ($p_key['patward_id'] == "1") { ?>
+                                                <option value="1" selected>Male Ward</option>
+                                                <option value="2">Female Ward</option>
+                                                <option value="3">Upper Male Ward</option>
+												<option value="4">Side Rooms<option>
+                                                <option value="6">Hall</option>
+                                                <option value="5">ICU</option>
+
+                                            <?php } ?>
+                                            <?php if ($p_key['patward_id'] == "2") { ?>
+                                                <option value="1">Male Ward</option>
+                                                <option value="2" selected>Female Ward</option>
+                                                <option value="3">Upper Male Ward</option>
+												<option value="4">Side Rooms<option>
+                                                <option value="6">Hall</option>
+                                                <option value="5">ICU</option>
+
+                                            <?php } ?>
+                                            <?php if ($p_key['patward_id'] == "3") { ?>
+                                                <option value="1">Male Ward</option>
+                                                <option value="2">Female Ward</option>
+                                                <option value="3" selected>Upper Male Ward</option>
+												<option value="4">Side Rooms<option>
+                                                <option value="6">Hall</option>
+                                                <option value="5">ICU</option>
+
+                                            <?php } ?>
+                                            <?php if ($p_key['patward_id'] == "4") { ?>
+                                                <option value="1">Male Ward</option>
+                                                <option value="2">Female Ward</option>
+                                                <option value="3">Upper Male Ward</option>
+												<option value="4" selected>Side Rooms<option>
+                                                <option value="6" >Hall</option>
+                                                <option value="5">ICU</option>
+                                            <?php } ?>
+                                            <?php if ($p_key['patward_id'] == "5") { ?>
+                                                <option value="1">Male Ward</option>
+                                                <option value="2">Female Ward</option>
+                                                <option value="3">Upper Male Ward</option>
+												<option value="4">Side Rooms<option>
+                                                <option value="6">Hall</option>
+                                                <option value="5" selected>ICU</option>
+                                            <?php } ?>
+											<?php if ($p_key['patward_id'] == "6") { ?>
+                                                <option value="1">Male Ward</option>
+                                                <option value="2">Female Ward</option>
+                                                <option value="3">Upper Male Ward</option>
+												<option value="4">Side Rooms<option>
+                                                <option value="6" selected>Hall</option>
+                                                <option value="5" >ICU</option>
+                                            <?php } ?>
+
+                                        </select>
+                                    </div>
+                                </div><!-- /.col -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Bed Number</label>
+                                        <select required="required" class="form-control beds" style="width: 100%;"
+                                                name="bedNumber">
+                                            <option></option>
+											<!-- Male Ward Beds -->
+											<option value="1" <?php if ($p_key['patbed_id'] == "1") { echo "selected"; } ?>>Bed Number 1 (Male Ward)</option>
+											<option value="2" <?php if ($p_key['patbed_id'] == "2") { echo "selected"; } ?>>Bed Number 2 (Male Ward)</option>
+											<option value="3" <?php if ($p_key['patbed_id'] == "3") { echo "selected"; } ?>>Bed Number 3 (Male Ward)</option>
+											<option value="4" <?php if ($p_key['patbed_id'] == "4") { echo "selected"; } ?>>Bed Number 4 (Male Ward)</option>
+											<option value="5" <?php if ($p_key['patbed_id'] == "5") { echo "selected"; } ?>>Bed Number 5 (Male Ward)</option>
+											<option value="6" <?php if ($p_key['patbed_id'] == "6") { echo "selected"; } ?>>Bed Number 6 (Male Ward)</option>
+											<option value="7" <?php if ($p_key['patbed_id'] == "7") { echo "selected"; } ?>>Bed Number 7 (Male Ward)</option>
+											<option value="8" <?php if ($p_key['patbed_id'] == "8") { echo "selected"; } ?>>Bed Number 8 (Male Ward)</option>
+											<option value="9" <?php if ($p_key['patbed_id'] == "9") { echo "selected"; } ?>>Bed Number 9 (Male Ward)</option>
+											<option value="10" <?php if ($p_key['patbed_id'] == "10") { echo "selected"; } ?>>Bed Number 10 (Male Ward)</option>
+											<option value="11" <?php if ($p_key['patbed_id'] == "11") { echo "selected"; } ?>>Bed Number 11 (Male Ward)</option>
+											<option value="12" <?php if ($p_key['patbed_id'] == "12") { echo "selected"; } ?>>Bed Number 12 (Male Ward)</option>
+											<option value="13" <?php if ($p_key['patbed_id'] == "13") { echo "selected"; } ?>>Bed Number 13 (Male Ward)</option>
+											<option value="14" <?php if ($p_key['patbed_id'] == "14") { echo "selected"; } ?>>Bed Number 14 (Male Ward)</option>
+											<option value="15" <?php if ($p_key['patbed_id'] == "15") { echo "selected"; } ?>>Bed Number 15 (Male Ward)</option>
+											<option value="16" <?php if ($p_key['patbed_id'] == "16") { echo "selected"; } ?>>Bed Number 16 (Male Ward)</option>
+											<option value="17" <?php if ($p_key['patbed_id'] == "17") { echo "selected"; } ?>>Bed Number 17 (Male Ward)</option>
+											<option value="18" <?php if ($p_key['patbed_id'] == "18") { echo "selected"; } ?>>Bed Number 18 (Male Ward)</option>
+											<option value="19" <?php if ($p_key['patbed_id'] == "19") { echo "selected"; } ?>>Bed Number 19 (Male Ward)</option>
+											<option value="20" <?php if ($p_key['patbed_id'] == "20") { echo "selected"; } ?>>Bed Number 20 (Male Ward)</option>
+											<!-- Female Ward Beds -->
+											<option value="21" <?php if ($p_key['patbed_id'] == "21") { echo "selected"; } ?>>Bed Number 1 (Female Ward)</option>
+											<option value="22" <?php if ($p_key['patbed_id'] == "22") { echo "selected"; } ?>>Bed Number 2 (Female Ward)</option>
+											<option value="23" <?php if ($p_key['patbed_id'] == "23") { echo "selected"; } ?>>Bed Number 3 (Female Ward)</option>
+											<option value="24" <?php if ($p_key['patbed_id'] == "24") { echo "selected"; } ?>>Bed Number 4 (Female Ward)</option>
+											<option value="25" <?php if ($p_key['patbed_id'] == "25") { echo "selected"; } ?>>Bed Number 5 (Female Ward)</option>
+											<option value="26" <?php if ($p_key['patbed_id'] == "26") { echo "selected"; } ?>>Bed Number 6 (Female Ward)</option>
+											<option value="27" <?php if ($p_key['patbed_id'] == "27") { echo "selected"; } ?>>Bed Number 7 (Female Ward)</option>
+											<option value="28" <?php if ($p_key['patbed_id'] == "28") { echo "selected"; } ?>>Bed Number 8 (Female Ward)</option>
+											<option value="29" <?php if ($p_key['patbed_id'] == "29") { echo "selected"; } ?>>Bed Number 9 (Female Ward)</option>
+											<option value="30" <?php if ($p_key['patbed_id'] == "30") { echo "selected"; } ?>>Bed Number 10 (Female Ward)</option>
+											<option value="31" <?php if ($p_key['patbed_id'] == "31") { echo "selected"; } ?>>Bed Number 11 (Female Ward)</option>
+											<option value="32" <?php if ($p_key['patbed_id'] == "32") { echo "selected"; } ?>>Bed Number 12 (Female Ward)</option>
+											<option value="33" <?php if ($p_key['patbed_id'] == "33") { echo "selected"; } ?>>Bed Number 13 (Female Ward)</option>
+											<option value="34" <?php if ($p_key['patbed_id'] == "34") { echo "selected"; } ?>>Bed Number 14 (Female Ward)</option>
+											<option value="35" <?php if ($p_key['patbed_id'] == "35") { echo "selected"; } ?>>Bed Number 15 (Female Ward)</option>
+											<option value="36" <?php if ($p_key['patbed_id'] == "36") { echo "selected"; } ?>>Bed Number 16 (Female Ward)</option>
+											<option value="37" <?php if ($p_key['patbed_id'] == "37") { echo "selected"; } ?>>Bed Number 17 (Female Ward)</option>
+											<option value="38" <?php if ($p_key['patbed_id'] == "38") { echo "selected"; } ?>>Bed Number 18 (Female Ward)</option>
+											<option value="39" <?php if ($p_key['patbed_id'] == "39") { echo "selected"; } ?>>Bed Number 19 (Female Ward)</option>
+											<option value="40" <?php if ($p_key['patbed_id'] == "40") { echo "selected"; } ?>>Bed Number 20 (Female Ward)</option>
+											<!-- Upper Male Ward Beds -->
+											<option value="41" <?php if ($p_key['patbed_id'] == "41") { echo "selected"; } ?>>Bed Number 1 (Upper Male Ward)</option>
+											<option value="42" <?php if ($p_key['patbed_id'] == "42") { echo "selected"; } ?>>Bed Number 2 (Upper Male Ward)</option>
+											<option value="43" <?php if ($p_key['patbed_id'] == "43") { echo "selected"; } ?>>Bed Number 3 (Upper Male Ward)</option>
+											<option value="44" <?php if ($p_key['patbed_id'] == "44") { echo "selected"; } ?>>Bed Number 4 (Upper Male Ward)</option>
+											<option value="45" <?php if ($p_key['patbed_id'] == "45") { echo "selected"; } ?>>Bed Number 5 (Upper Male Ward)</option>
+											<option value="46" <?php if ($p_key['patbed_id'] == "46") { echo "selected"; } ?>>Bed Number 6 (Upper Male Ward)</option>
+											<option value="47" <?php if ($p_key['patbed_id'] == "47") { echo "selected"; } ?>>Bed Number 7 (Upper Male Ward)</option>
+											<option value="48" <?php if ($p_key['patbed_id'] == "48") { echo "selected"; } ?>>Bed Number 8 (Upper Male Ward)</option>
+											<option value="49" <?php if ($p_key['patbed_id'] == "49") { echo "selected"; } ?>>Bed Number 9 (Upper Male Ward)</option>
+											<option value="50" <?php if ($p_key['patbed_id'] == "50") { echo "selected"; } ?>>Bed Number 10 (Upper Male Ward)</option>
+											<option value="51" <?php if ($p_key['patbed_id'] == "51") { echo "selected"; } ?>>Bed Number 11 (Upper Male Ward)</option>
+											<option value="52" <?php if ($p_key['patbed_id'] == "52") { echo "selected"; } ?>>Bed Number 12 (Upper Male Ward)</option>
+											<option value="53" <?php if ($p_key['patbed_id'] == "53") { echo "selected"; } ?>>Bed Number 13 (Upper Male Ward)</option>
+											<option value="54" <?php if ($p_key['patbed_id'] == "54") { echo "selected"; } ?>>Bed Number 14 (Upper Male Ward)</option>
+											<option value="55" <?php if ($p_key['patbed_id'] == "55") { echo "selected"; } ?>>Bed Number 15 (Upper Male Ward)</option>
+											<option value="56" <?php if ($p_key['patbed_id'] == "56") { echo "selected"; } ?>>Bed Number 16 (Upper Male Ward)</option>
+											<option value="57" <?php if ($p_key['patbed_id'] == "57") { echo "selected"; } ?>>Bed Number 17 (Upper Male Ward)</option>
+											<option value="58" <?php if ($p_key['patbed_id'] == "58") { echo "selected"; } ?>>Bed Number 18 (Upper Male Ward)</option>
+											<option value="59" <?php if ($p_key['patbed_id'] == "59") { echo "selected"; } ?>>Bed Number 19 (Upper Male Ward)</option>
+											<option value="60" <?php if ($p_key['patbed_id'] == "60") { echo "selected"; } ?>>Bed Number 20 (Upper Male Ward)</option>
+											<!-- Side Rooms Beds -->
+											<option value="61" <?php if ($p_key['patbed_id'] == "61") { echo "selected"; } ?>>Side Room 1</option>
+											<option value="62" <?php if ($p_key['patbed_id'] == "62") { echo "selected"; } ?>>Side Room 2</option>
+											<option value="63" <?php if ($p_key['patbed_id'] == "63") { echo "selected"; } ?>>Side Room 3</option>
+											<option value="64" <?php if ($p_key['patbed_id'] == "64") { echo "selected"; } ?>>Side Room 4</option>
+											<option value="65" <?php if ($p_key['patbed_id'] == "65") { echo "selected"; } ?>>Side Room 5</option>
+											<option value="66" <?php if ($p_key['patbed_id'] == "66") { echo "selected"; } ?>>Side Room 6</option>
+											<option value="67" <?php if ($p_key['patbed_id'] == "67") { echo "selected"; } ?>>Side Room 7</option>
+											<option value="68" <?php if ($p_key['patbed_id'] == "68") { echo "selected"; } ?>>Side Room 8</option>
+											<option value="69" <?php if ($p_key['patbed_id'] == "69") { echo "selected"; } ?>>Side Room 9</option>
+											<option value="70" <?php if ($p_key['patbed_id'] == "70") { echo "selected"; } ?>>Side Room 10</option>
+											<!-- Hall Beds -->
+											<option value="79" <?php if ($p_key['patbed_id'] == "79") { echo "selected"; } ?>>Bed Number 1 (Hall)</option>
+											<option value="80" <?php if ($p_key['patbed_id'] == "80") { echo "selected"; } ?>>Bed Number 2 (Hall)</option>
+											<option value="81" <?php if ($p_key['patbed_id'] == "81") { echo "selected"; } ?>>Bed Number 3 (Hall)</option>
+											<option value="82" <?php if ($p_key['patbed_id'] == "82") { echo "selected"; } ?>>Bed Number 4 (Hall)</option>
+											<option value="83" <?php if ($p_key['patbed_id'] == "83") { echo "selected"; } ?>>Bed Number 5 (Hall)</option>
+											<option value="84" <?php if ($p_key['patbed_id'] == "84") { echo "selected"; } ?>>Bed Number 6 (Hall)</option>
+											<option value="85" <?php if ($p_key['patbed_id'] == "85") { echo "selected"; } ?>>Bed Number 7 (Hall)</option>
+											<option value="86" <?php if ($p_key['patbed_id'] == "86") { echo "selected"; } ?>>Bed Number 8 (Hall)</option>
+											<option value="87" <?php if ($p_key['patbed_id'] == "87") { echo "selected"; } ?>>Bed Number 9 (Hall)</option>
+											<option value="88" <?php if ($p_key['patbed_id'] == "88") { echo "selected"; } ?>>Bed Number 10 (Hall)</option>
+											<!-- ICU Beds -->
+											<option value="71" <?php if ($p_key['patbed_id'] == "71") { echo "selected"; } ?>>Bed Number 1 (ICU)</option>
+											<option value="72" <?php if ($p_key['patbed_id'] == "72") { echo "selected"; } ?>>Bed Number 2 (ICU)</option>
+											<option value="73" <?php if ($p_key['patbed_id'] == "73") { echo "selected"; } ?>>Bed Number 3 (ICU)</option>
+											<option value="74" <?php if ($p_key['patbed_id'] == "74") { echo "selected"; } ?>>Bed Number 4 (ICU)</option>
+											<option value="75" <?php if ($p_key['patbed_id'] == "75") { echo "selected"; } ?>>Bed Number 5 (ICU)</option>
+											<option value="76" <?php if ($p_key['patbed_id'] == "76") { echo "selected"; } ?>>Bed Number 6 (ICU)</option>
+											<option value="77" <?php if ($p_key['patbed_id'] == "77") { echo "selected"; } ?>>Bed Number 7 (ICU)</option>
+											<option value="78" <?php if ($p_key['patbed_id'] == "78") { echo "selected"; } ?>>Bed Number 8 (ICU)</option>
+											
+
+
+                                        </select>
+                                    </div>
+                                </div><!-- /.col -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Admission Date &amp; Time</label>
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <input type="text" class="form-control pull-right" id="datepicker2"
+                                                   name="admDateTime" autocomplete="off"
+                                                   value="<?php echo $p_key['patAdmDate']; ?>" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group"></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group"></div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+
+                                        <!--                        <input type="submit" class="btn bg-blue margin" value ="Admit Patient &amp; Print Adm. Sheet"</input>-->
+                                        <button type="button" class="btn bg-blue margin submit-btn custom-submit-btn"><i
+                                                    class="fa fa-user-plus" aria-hidden="true"></i> &nbsp;Update
+                                            Information
+                                        </button>
+
+                                    </div>
+                                </div><!-- /.col -->
+                            </div>
+
+                        </div>
+
+                        <div class="modal fade" tabindex="-1" role="dialog" id="print-modal">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span></button>
+
+                                        <h4 class="modal-title">Confirmation Message</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Do you want to print the admission sheet?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <input type="submit" class="btn bg-blue" value="Save Information"</input>
+                                        <input type="submit" class="btn bg-blue" id="insert-print-form-btn"
+                                               value="Save & Print Information"</input>
+                                    </div>
+                                </div><!-- /.modal-content -->
+                            </div><!-- /.modal-dialog -->
+                        </div><!-- /.modal -->
+
+                    </form>
+                <?php }
+            } ?>
+        </section>
+
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+            <b>Version</b> 1.0
+        </div>
+        <strong>Copyright &copy;  <?php echo date("Y"); ?> <a target="_blank" href="<?php echo SITEURL; ?>"><?php echo COMPANYNAME; ?></a>.</strong> All rights
+        reserved.
+    </footer>
+</div>
+<?php $this->load->view('footer'); ?>
+</body>
+</html>

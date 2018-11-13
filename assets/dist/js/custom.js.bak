@@ -1,0 +1,566 @@
+$(document).ready(function() {
+  $('#example').vTicker();
+});
+$(document).ready(function() {
+   $('.sidebar-menu').load("http://localhost:8080/CodeIgniter/index.php/dashboard/get_menus/",function () {
+        $('.sidebar-menu').fadeIn('fast');
+        $( "#adm-minimaximizer" ).click(function() {
+            if($( "#adm-minimaximizer>span>i" ).hasClass("fa-plus-circle")){
+                $( "#adm-minimaximizer>span>i" ).removeClass( "fa-plus-circle" ).addClass( "fa-minus-circle" );
+
+
+            }
+            else{
+                $( "#adm-minimaximizer>span>i" ).removeClass( "fa-minus-circle" ).addClass( "fa-plus-circle" );
+            }
+        });
+        $( "#otb-minimaximizer" ).click(function() {
+            if($( "#otb-minimaximizer>span>i" ).hasClass("fa-plus-circle")){
+                $( "#otb-minimaximizer>span>i" ).removeClass( "fa-plus-circle" ).addClass( "fa-minus-circle" );
+            }
+            else{
+                $( "#otb-minimaximizer>span>i" ).removeClass( "fa-minus-circle" ).addClass( "fa-plus-circle" );
+            }
+        });
+        $( "#otp-minimaximizer" ).click(function() {
+            if($( "#otp-minimaximizer>span>i" ).hasClass("fa-plus-circle")){
+                $( "#otp-minimaximizer>span>i" ).removeClass( "fa-plus-circle" ).addClass( "fa-minus-circle" );
+            }
+            else{
+                $( "#otp-minimaximizer>span>i" ).removeClass( "fa-minus-circle" ).addClass( "fa-plus-circle" );
+            }
+        });
+        $( "#lab-minimaximizer" ).click(function() {
+            if($( "#lab-minimaximizer>span>i" ).hasClass("fa-plus-circle")){
+                $( "#lab-minimaximizer>span>i" ).removeClass( "fa-plus-circle" ).addClass( "fa-minus-circle" );
+            }
+            else{
+                $( "#lab-minimaximizer>span>i" ).removeClass( "fa-minus-circle" ).addClass( "fa-plus-circle" );
+            }
+        });
+        $( "#wrl-minimaximizer" ).click(function() {
+            if($( "#wrl-minimaximizer>span>i" ).hasClass("fa-plus-circle")){
+                $( "#wrl-minimaximizer>span>i" ).removeClass( "fa-plus-circle" ).addClass( "fa-minus-circle" );
+            }
+            else{
+                $( "#wrl-minimaximizer>span>i" ).removeClass( "fa-minus-circle" ).addClass( "fa-plus-circle" );
+            }
+        });
+        $( "#rep-minimaximizer" ).click(function() {
+            if($( "#rep-minimaximizer>span>i" ).hasClass("fa-plus-circle")){
+                $( "#rep-minimaximizer>span>i" ).removeClass( "fa-plus-circle" ).addClass( "fa-minus-circle" );
+            }
+            else{
+                $( "#rep-minimaximizer>span>i" ).removeClass( "fa-minus-circle" ).addClass( "fa-plus-circle" );
+            }
+            $('#shifted-modal').modal('show');
+        });
+       $( "#acc-minimaximizer" ).click(function() {
+           if($( "#acc-minimaximizer>span>i" ).hasClass("fa-plus-circle")){
+               $( "#acc-minimaximizer>span>i" ).removeClass( "fa-plus-circle" ).addClass( "fa-minus-circle" );
+           }
+           else{
+               $( "#rep-minimaximizer>span>i" ).removeClass( "fa-minus-circle" ).addClass( "fa-plus-circle" );
+           }
+           $('#shifted-modal').modal('show');
+       });
+    });
+    $('.patName-select').select2({
+        placeholder: "Search by MR# or Name",
+        minimumInputLength: 2,
+            ajax: {
+                url: "http://localhost:8080/CodeIgniter/index.php/dashboard/search",
+                dataType: 'json',
+                delay: 250,
+
+                data: function (params) {
+                    var query = {
+                        search_by_cnic: params.term
+                    }
+                    // Query parameters will be ?search=[term]&type=public
+                    return query;
+                },
+                processResults: function (data) {
+                    return {
+
+                        results: data
+                    };
+
+                },
+                cache: true
+            }
+            });
+    $('.patName-select').change(function(){
+        $('#search-by-name').submit();
+    });
+    $('.shifted-from').select2({
+        placeholder: "Select Shifted From"
+    });
+    $('.shifted-to').select2({
+        placeholder: "Select Shifted To"
+    });
+    $('.updated-ward').select2({
+        placeholder: "New Ward Number"
+    });
+    $('.ward-select').select2({
+        placeholder: "Search By Ward",
+        ajax: {
+            url: "http://localhost:8080/CodeIgniter/index.php/dashboard/search",
+            dataType: 'json',
+            delay: 250,
+
+            data: function (params) {
+                var query = {
+                    search_by_ward: "true"
+                }
+                return query;
+            },
+            processResults: function (data) {
+                return {
+
+                    results: data
+                };
+
+            },
+            cache: true
+        }
+    });
+    $('.ward-select').change(function(){
+        $('#search-by-ward').submit();
+    });
+    $('.sex-select').select2({
+        placeholder: "Search By Gender"
+    });
+    $('.sex-select').change(function(){
+        console.debug("changed");
+        $('#search-by-gender').submit();
+    });
+    $('.opt-select').select2({
+        placeholder: "Search Patients in OPT"
+    });
+    $('.bld-grp').select2({
+    placeholder: "Select Blood Group"
+});
+    $('.disease').select2({
+        placeholder: "Search Disease"
+    });
+    $('.admitted-th').select2({
+    placeholder: "Admitted Through"
+});
+    $('.next-of-kin').select2({
+    placeholder: "Select Next of Kin"
+});
+    $('.history-select').select2({
+    placeholder: "Search by Name or CNIC"
+});
+    $('.ward-name').select2({
+    placeholder: "Select Ward Number"
+});
+    $('.beds').select2({
+    placeholder: "Select Bed Number"
+});
+    $('.discharge-select').select2({
+    placeholder: "Search by MR# or Name"
+});
+    $('.discharge-patient-select').select2({
+    placeholder: "Search by MR#",
+        ajax: {
+            url: "http://localhost:8080/CodeIgniter/index.php/dashboard/search",
+            dataType: 'json',
+            delay: 250,
+
+            data: function (params) {
+                var query = {
+                    search_discharged_by_cnic: params.term
+                }
+                return query;
+            },
+            processResults: function (data) {
+                return {
+
+                    results: data
+                };
+
+            },
+            cache: true
+        }
+    });
+    $('.discharge-patient-select').change(function(){
+        $('#search-discharged-patients').submit();
+    });
+    $('#hist-submit').click(function(){
+            var patHistory1      =     $('#patHistory').val();
+            var chartpatregNo1   =     $('#chartpatregNo').val();
+            var historycount = $('.history-texts>.direct-chat-name').last().text();
+
+            var newhistorycount = parseInt(historycount) + 1;
+            var historytime = 'Just Now';
+            console.log('starting ajax');
+            $.ajax({
+                url: "http://localhost:8080/CodeIgniter/index.php/dashboard/insert_brief_history",
+                type: "post",
+                data: { patHistory: patHistory1, chartpatregNo: chartpatregNo1 },
+                success: function (data) {
+                    $('#patHistory').val("");
+                    $(".history-texts").append('<span class="direct-chat-name pull-left" style="padding: 10px;" >'+ newhistorycount +'.</span><div class="direct-chat-text">'+ patHistory1 +'</div><div class="direct-chat-info clearfix"><span class="direct-chat-timestamp pull-right">'+ historytime +' By &nbsp;Dr. Ahmad </span>');
+                    scrollDown();
+                    console.log(data);
+
+                }
+            });
+    });
+    $('#inv-submit').click(function(){
+        var patInvestigation1      =     $('#patInverstigation').val();
+        var chartpatregNo1   =     $('#chartpatregNo').val();
+        var historycount = $('.inv-texts>.direct-chat-name').last().text();
+        var newhistorycount = parseInt(historycount) + 1;
+        var historytime = 'Just Now';
+        console.log('starting ajax');
+        $.ajax({
+            url: "http://localhost:8080/CodeIgniter/index.php/dashboard/insert_inv_plan",
+            type: "post",
+            data: { patInvestigation: patInvestigation1, chartpatregNo: chartpatregNo1 },
+            success: function (data) {
+                $('#patInverstigation').val("");
+                $(".inv-texts").append('<span class="direct-chat-name pull-left" style="padding: 10px;" >'+ newhistorycount +'.</span><div class="direct-chat-text">'+ patInvestigation1 +'</div><div class="direct-chat-info clearfix"><span class="direct-chat-timestamp pull-right">'+ historytime +' By &nbsp;Dr. Ahmad </span>');
+
+                scrollDown();
+                console.log(data);
+            }
+        });
+    });
+    $('#treat-submit').click(function(){
+        var patTreat      =     $('#patTreatPlan').val();
+        var chartpatregNo2   =     $('#chartpatregNo').val();
+        var treatcount = $('.treat-texts>.direct-chat-name').last().text();
+        if(treatcount == ""){
+            treatcount = 0;
+        }
+        var newhistorycount = parseInt(treatcount) + 1;
+        var historytime = 'Just Now';
+        console.log('starting ajax');
+        $.ajax({
+            url: "http://localhost:8080/CodeIgniter/index.php/dashboard/insert_treatment_plan",
+            type: "post",
+            data: { patTreatPlan: patTreat, chartpatregNo: chartpatregNo2 },
+            success: function (data) {
+                $('#patTreatPlan').val("");
+                $(".treat-texts").append('<span class="direct-chat-name pull-left" style="padding: 10px;" >'+ newhistorycount +'.</span><div class="direct-chat-text">'+ patTreat +'</div><div class="direct-chat-info clearfix"><span class="direct-chat-timestamp pull-right">'+ historytime +' By &nbsp;Dr. Ahmad </span>');
+                scrollDown();
+                console.log(data);
+
+            }
+        });
+    });
+    scrollDown();
+    function scrollDown() {
+        $(".direct-chat-messages").animate({
+            scrollTop: $(document).height() + $(window).height()
+        });
+    }
+    // $('#shift-submit').click(function(){
+    //     var shiftedFrom     =       $('.shifted-from').val();
+    //     var shiftedTo       =       $('#shifted-to').val();
+    //     var shiftedBy       =       $('#shift-by').val();
+    //     var outcome         =       $('.custom-radio:checked').val();
+    //     var patID           =       $('#patID').val();
+    //     console.log('starting ajax'+shiftedFrom+shiftedTo+ shiftedBy+ outcome + patID);
+    //     $.ajax({
+    //         url: "http://localhost:8080/CodeIgniter/index.php/dashboard/shift_module/",
+    //         type: "post",
+    //         data: { shiftFrom: shiftedFrom, shiftTo: shiftedTo, shiftPatId: patID, patOutcome: outcome, shiftBy: shiftedBy },
+    //         success: function (data) {
+    //             $('#shift-modal').modal('hide');
+    //             $('.wrapper').append('<div style="position: fixed;\n' +
+    //                 'top: 20px;\n' +
+    //                 'right: 20px;\n' +
+    //                 'z-index: 1030;" class="alert alert-success alert-dismissible">\n' +
+    //                 '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>\n' +
+    //                 '<h4><i class="icon fa fa-ban"></i> Success!</h4>\n' +
+    //                 'Patient has been Shifted Successfully.\n' +
+    //                 '</div>');
+    //             $('.alert-success').delay(3000).fadeOut('slow');
+    //             console.log(data);
+    //         }
+    //     });
+    // });
+
+    $('#discharge-submit').click(function(){
+
+        var regNo             = $('#regNo').val();
+        var patName           = $('#patName').val();
+        var patNoKType        = $('#patNoKType').val();
+        var patNoK            = $('#patNoK').val();
+        var patDoB            = $('#patDoB').val();
+        var patAge            = $('#patAge').val();
+        var patBldGrp         = $('#patBldGrp').val();
+        var patDisease_id     = $('#patDisease_id').val();
+        var patSex            = $('#patSex').val();
+        var patCNIC           = $('#patCNIC').val();
+        var patAddress        = $('#patAddress').val();
+        var patOccupation     = $('#patOccupation').val();
+        var patPhone          = $('#patPhone').val();
+        var patEntitled       = $('#patEntitled').val();
+        var patunit_Id        = $('#patunit_Id').val();
+        var patShiftedFrom    = $('#patShiftedFrom').val();
+        var patward_id        = $('#patward_id').val();
+        var patbed_id         = $('#patbed_id').val();
+        var patAdmDate        = $('#patAdmDate').val();
+        var patChart_id       = $('#patChart_id').val();
+        var patStatus         = $('.discharge-custom-radio:checked').val();
+        var dischargeadvice   = $('#discharge-advice').val();
+        var shiftedFrom       = $('.shifted-from').val();
+        var shiftedTo         = $('#shifted-to').val();
+        var shiftedBy         = $('#shift-by').val();
+        var outcome           = $('.discharge-custom-radio:checked').val();
+        var patID             = $('#regNo').val();
+        var check = $('#chkshift').prop("checked");
+
+        console.log('starting ajax'+check);
+        if(check == true) {
+            if (shiftedFrom !== '' && shiftedTo !== '' && shiftedBy !== '' && outcome !== '' && patID !== '') {
+                    $.ajax({
+                        url: "http://localhost:8080/CodeIgniter/index.php/dashboard/insert_discharge_db/",
+                        type: "post",
+                        data: {
+                            regNo: regNo,
+                            patName: patName,
+                            patNoKType: patNoKType,
+                            patNoK: patNoK,
+                            patDoB: patDoB,
+                            patAge: patAge,
+                            patBldGrp: patBldGrp,
+                            patDisease_id: patDisease_id,
+                            patSex: patSex,
+                            patCNIC: patCNIC,
+                            patAddress: patAddress,
+                            patOccupation: patOccupation,
+                            patPhone: patPhone,
+                            patEntitled: patEntitled,
+                            patunit_Id: patunit_Id,
+                            patShiftedFrom: patShiftedFrom,
+                            patward_id: patward_id,
+                            patbed_id: patbed_id,
+                            patAdmDate: patAdmDate,
+                            patChart_id: patChart_id,
+                            patStatus: patStatus,
+                            shiftFrom: shiftedFrom,
+                            shiftTo: shiftedTo,
+                            shiftPatId: patID,
+                            patOutcome: outcome,
+                            shiftBy: shiftedBy,
+                            discharge_advice: dischargeadvice
+                        },
+                        success: function (data) {
+                            $('#discharge-modal').modal('hide');
+                            $('#status').text("Discharged");
+                            $('.wrapper').append('<div style="position: fixed;\n' +
+                                'top: 20px;\n' +
+                                'right: 20px;\n' +
+                                'z-index: 1030;" class="alert alert-success alert-dismissible">\n' +
+                                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>\n' +
+                                '<h4><i class="icon fa fa-ban"></i> Success!</h4>\n' +
+                                'Patient has been Discharged Successfully.\n' +
+                                '</div>');
+                            $('.alert-success').delay(4000).fadeOut('slow');
+                            console.log(data);
+                        }
+                    });
+        }
+            else {
+                alert("Please fill in the Shift Information to proceed!");
+            }
+        }
+        else {
+            if($('.discharge-custom-radio:checked').prop("checked") === true && dischargeadvice !== "") {
+                $.ajax({
+                    url: "http://localhost:8080/CodeIgniter/index.php/dashboard/insert_discharge_db/",
+                    type: "post",
+                    data: {
+                        regNo: regNo,
+                        patName: patName,
+                        patNoKType: patNoKType,
+                        patNoK: patNoK,
+                        patDoB: patDoB,
+                        patAge: patAge,
+                        patBldGrp: patBldGrp,
+                        patDisease_id: patDisease_id,
+                        patSex: patSex,
+                        patCNIC: patCNIC,
+                        patAddress: patAddress,
+                        patOccupation: patOccupation,
+                        patPhone: patPhone,
+                        patEntitled: patEntitled,
+                        patunit_Id: patunit_Id,
+                        patShiftedFrom: patShiftedFrom,
+                        patward_id: patward_id,
+                        patbed_id: patbed_id,
+                        patAdmDate: patAdmDate,
+                        patChart_id: patChart_id,
+                        patStatus: patStatus,
+                        discharge_advice: dischargeadvice
+                    },
+                    success: function (data) {
+                        $('#discharge-modal').modal('hide');
+                        $('#status').text("Discharged");
+                        $('.wrapper').append('<div style="position: fixed;\n' +
+                            'top: 20px;\n' +
+                            'right: 20px;\n' +
+                            'z-index: 1030;" class="alert alert-success alert-dismissible">\n' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>\n' +
+                            '<h4><i class="icon fa fa-ban"></i> Success!</h4>\n' +
+                            'Patient has been Discharged Successfully.\n' +
+                            '</div>');
+                        $('.alert-success').delay(4000).fadeOut('slow');
+                        console.log(data);
+                    }
+                });
+            }
+            else{
+                alert("Please select an option from the Outcome options and fill the discharge advice!")
+            }
+        }
+    });
+
+    $('#entitled-true').on('ifChecked', function () {
+        $('.customlabel').removeClass("hide-label");
+    });
+    $('#entitled-false').on('ifChecked', function () {
+        $('.customlabel').addClass("hide-label");
+    });
+    $('.submit-btn').click(function () {
+        $('#print-modal').modal('show');
+    });
+    // #insert-form-btn
+    // #insert-print-form-btn
+
+    $('#insert-form-btn').click(function () {
+        $('.submit-form').submit();
+    });
+    $('#chkshift').on('ifChecked',function () {
+            $('.shift-menu').removeAttr("style").attr("style","display:block");
+
+    });
+    $('#chkshift').on('ifUnchecked',function () {
+            $('.shift-menu').removeAttr("style").attr("style","display:none");
+    });
+
+
+    function isChecked() {
+        isCheck = true;
+        $('#chkshift').on('ifChecked',function () {
+            return isCheck = true;
+        });
+        $('#chkshift').on('ifUnchecked',function () {
+            return isCheck = false;
+        });
+    }
+
+    function validateForm() {
+        var isValid = true;
+        $('.submit-form').each(function() {
+            if ( $(this).val() === '' )
+                isValid = false;
+        });
+        return isValid;
+    }
+    function validateShiftForm() {
+        var isValid = true;
+        $('#shift-f').each(function() {
+            if ( $(this).val() === '' )
+                isValid = false;
+        });
+        return isValid;
+    }
+    $('#insert-print-form-btn').click(function () {
+        if(validateForm() === true) {
+            window.print();
+        }
+        else {
+            $('#print-modal').modal('hide');
+            $('.wrapper').append('<div style="position: fixed;\n' +
+                'top: 20px;\n' +
+                'right: 20px;\n' +
+                'z-index: 1030;" class="alert alert-danger alert-dismissible">\n' +
+                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>\n' +
+                '<h4><i class="icon fa fa-ban"></i> Error!</h4>\n' +
+                'Please fill-up all the required information to proceed.\n' +
+                '</div>');
+            $('.alert-danger').delay(3000).fadeOut('slow');
+        }
+    });
+    $('.alert-success').delay(3000).fadeOut('slow');
+
+
+    // $('#insert-form-btn').click(function () {
+    //     if(validateForm() == false) {
+    //         $('#print-modal').modal('hide');
+    //     }
+    // });
+
+
+
+});
+$(document).ready(function(){
+  $('input').iCheck({
+    checkboxClass: 'icheckbox_flat',
+    radioClass: 'iradio_flat',
+    increaseArea: '20%' // optional
+  });
+
+    $('#datepicker').datepicker({
+        format: 'dd-mm-yyyy'
+    });
+    $('#datepicker').change(function () {
+        dob = new Date($('#datepicker').val());
+        var today = new Date();
+        var age = Math.floor((today-dob) / (365.25 * 24 * 60 * 60 * 1000));
+        $('#patAge').val(age);
+    });
+    function formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
+    $('.next-of-kin').change(function () {
+        var nokVal = $('.next-of-kin').val();
+        if(nokVal == "S/O"){
+            console.log('In');
+            $('#sex-male').iCheck('check');
+        }
+        else {
+            console.log('Out');
+            $('#sex-female').iCheck('check');
+        }
+    });
+    $('#datepicker2').click(function () {
+        $('#datepicker2').datepicker();
+    });
+
+    var dNow = new Date();
+    var localdate= (dNow.getMonth()+1) + '-' + dNow.getDate() + '-' + dNow.getFullYear() + ' ' + formatAMPM(dNow);
+    $('#datepicker1').val(localdate);
+    $('#search-by-date').datepicker({
+        format: 'dd-mm-yyyy'
+    });
+    $('.search-by-date').change(function(){
+        $('#search-by-date').submit();
+    });
+    $('#cnic').keydown(function(){
+        //allow  backspace, tab, ctrl+A, escape, carriage return
+        if (event.keyCode == 8 || event.keyCode == 9
+            || event.keyCode == 27 || event.keyCode == 13
+            || (event.keyCode == 65 && event.ctrlKey === true) )
+            return;
+        if((event.keyCode < 48 || event.keyCode > 57))
+            event.preventDefault();
+        var length = $(this).val().length;
+        if(length == 5 || length == 13)
+            $(this).val($(this).val()+'-');
+    });
+});

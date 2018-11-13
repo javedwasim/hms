@@ -1,0 +1,176 @@
+
+.table tr > td .progress {
+    margin: 0
+}
+
+.box-body > .table {
+    margin-bottom: 0
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    border-top: 1px solid #4b4b4b;
+    padding: 2px 6px 2px 6px !important;
+}
+
+.table > thead > tr > th {
+    border-bottom: 2px solid #4b4b4b;
+    font-weight: 500;
+}
+
+.table > tbody > tr > th {
+    font-weight: 500;
+}
+
+.table tr td .progress {
+    margin-top: 5px
+}
+
+.table-bordered {
+    border: 1px solid #4b4b4b
+}
+
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+    border: 1px solid #4b4b4b
+}
+
+.table-bordered > thead > tr > th, .table-bordered > thead > tr > td {
+    border-bottom-width: 2px
+
+}
+
+.table.no-border, .table.no-border td, .table.no-border th {
+    border: 0
+}
+
+table.text-center, table.text-center td, table.text-center th {
+    text-align: center
+}
+
+.table.align th {
+    text-align: left
+}
+
+.table.align td {
+    text-align: right
+}
+
+.table {
+    margin-bottom: 10px !important;
+}
+
+.main-page {
+    width: 11.6in;
+    height: 7.6in;
+    margin: 0 auto;
+}
+
+.invoice-page {
+    overflow: hidden;
+    margin: 0 auto;
+    padding: 0 0 0 0;
+    display: table;
+}
+
+.invoice {
+    border: 1px solid;
+    border-color: #4b4b4b;
+    width: 96%;
+    float: left;
+    margin: 0 15px 0 15px;
+}
+
+.invoice-header {
+    float: left;
+    width: 99.6%;
+    padding: 15px 15px 0px 15px;
+}
+
+.invoice-logo {
+    height: 70px;
+    width: 83px;
+    float: left;
+}
+
+.invoice-header-text {
+    float: left;
+    width: 400px;
+    margin-top: 15px;
+    margin-left: 15px;
+}
+
+.invoice-header-text h2 {
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    float: left;
+    margin: 0px;
+    width: 100%;
+}
+
+.invoice-header-text label {
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    margin: 0px;
+    float: left;
+    width: 100%;
+}
+
+.invoice-body {
+    float: left;
+    padding: 0px 10px 10px 10px;
+    width: 100%;
+}
+
+.invoice-body ul {
+    list-style: none;
+    float: left;
+    margin: 0px;
+    padding: 0px 0px 15px 0px;
+    width: 100%;
+}
+
+.heading {
+    width: 99%;
+    float: left;
+    text-align: center;
+    font-weight: 700;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-size: 18px;
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+.date-range {
+    float: left;
+    width: 99%;
+    text-align: center;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    padding: 1px;
+    margin-bottom: 1px;
+}
+
+.invoice-detail {
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    width: 100%;
+    padding: 0px 8px 0px 8px;
+}
+
+.invoice-footer {
+    float: right !important;
+    width: 40%;
+    padding: 0px 8px 0 8px;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+}
+
+.invoice-tag {
+    float: right;
+    border: 1px solid #4b4b4b;
+    padding: 3px;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+}
+@media print{@page {size: landscape}}@media print{@page {size: landscape}}

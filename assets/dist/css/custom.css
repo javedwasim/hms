@@ -1,0 +1,217 @@
+.active_menu{
+    cursor: pointer;
+    color: #c2c7d0;
+    font-weight: bold;
+    list-style-type: none;
+    padding: 5px 5px;
+    font-size: 14px;
+    border-bottom: 1px solid #222;
+    background-color: #007bff;
+}
+.custom-radio{
+display: inline-block;
+}
+.radio-labels{
+    margin: 5px;
+}
+.wrapper{height:100%;position:relative;overflow-x:hidden;overflow-y:hidden}
+.direct-chat-msg {
+    margin-bottom: 0px !important;
+}
+.direct-chat-text{
+    margin: 5px 0 0 30px !important;
+}
+.btn-app {
+    border-radius: 3px !important;
+    position: relative !important;
+    padding: 30px 5px !important;
+    margin: 0 0 10px 10px !important;
+    min-width: 160px !important;
+    height: 120px !important;
+    text-align: center !important;
+    color: #666 !important;
+    border: 1px solid #949494 !important;
+    background-color: #f4f4f4 !important;
+    font-size: 14px !important;
+}
+.btn-app>.badge {
+    position: absolute;
+    top: -3px;
+    right: -10px;
+    font-size: 20px;
+    font-weight: 400;
+}
+.btn-app>.fa, .btn-app>.glyphicon, .btn-app>.ion {
+    font-size: 40px;
+    display: block;
+}
+.brief-history{
+    color: #fff;
+    background: #009688 !important;
+    background-color: #009688 !important;
+}
+.investigation-plan{
+    color: #fff;
+    background: #00796b !important;
+    background-color: #00796b !important;
+}
+.treatment-plan{
+    color: #fff;
+    background: #00838f !important;
+    background-color: #00838f !important; 
+}
+.btn-custom{
+    background-color: #2c8cb9 !important;
+    color: white !important;
+}
+form > h3{
+    margin-left: 20px;
+}
+
+@media (max-width: 767px) {
+    .small-box .icon {
+        display: -webkit-box !important;
+        /*right: 94px;*/
+        /*top: 0px;*/
+        /*font-size: 50px;*/
+        color: rgba(0, 0, 0, 0.07) !important;
+    }
+     .navbar {
+         top: 0;
+        margin: 0 !important;
+        position: fixed !important;
+    }
+    .main-sidebar {
+         padding-top: 50px;
+    }
+    section.content-header > h1 {
+        text-align: center;
+    }
+    .main-sidebar {
+        position: fixed !important;
+    }
+    .popover-content > .col-xs-8 {
+        width: 100% !important;
+    }
+}
+.hide-label {
+    display: none;
+}
+.custom-submit-btn {
+    float: right;
+    padding: 10px;
+    margin-top: 20px;
+    margin-right: 0px;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+.hide-shift{
+    display: none;
+}
+/*.form-control{
+    width: auto;
+}*/
+.custom-callout {
+       border-radius: 3px;
+    margin: 0 0 20px 0;
+    padding: 7px 30px 7px 5px;
+    border-left: 5px solid #a50101;
+    background-color: #dd4b39 !important;
+    color: white;
+    font-size: 11px;
+}
+.custom-span{
+    padding: 10px;
+    margin: 5px;
+    line-height: 4;
+}
+.popover-content > .col-xs-8 {
+    width: 100%;
+}
+.custom-close {
+    margin-top: -4px;
+    margin-left: 10px;
+}
+.custom-delete-span {
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+    background-color: #337ab7 !important;
+    cursor: pointer;
+}
+.info-box-content {
+    padding: 5px 10px;
+    margin-left: 90px;
+    font-size: 20px;
+    font-weight: bold;
+}
+.ahref{
+    cursor: pointer !important;
+}
+ul.slide > li {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+#color-available{ background-color: #00a65a !important;  }
+#color-occupied {  background-color: #f56954 !important;  }
+#color-blocked  {   background-color: #111111 !important;  }
+#color-temp-bed {  background-color: #f39c12 !important;  }
+#color-occu-temp-bed { background: linear-gradient(to right, #f56954 50%, #f39c12 50%); }
+
+/*binni code for account module start here */
+.discount-textbox {
+    height: 24px !important;
+}
+.no-border {
+    border: none !important;
+}
+.info{
+font-size:12px !important;
+}
+/*binni code for account module end here */
+
+@media (min-width: 1280px)
+{
+.col-md-offset-8 {margin-left: 61.66%;}
+.col-sm-offset-10 {
+    margin-left: 83.333333%;
+}
+}
+.checklist-text {
+    font-weight: 400 !important;
+}
+.amcharts-chart-div a {
+    display: none !important;
+}
+.invoice-border{
+    margin-bottom: 1%;
+}
+
+.editdata{
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 25px 0px;
+  
+    font-size: 12px;
+    font-weight: bold;
+}
+.editdatatab{
+    width: 70px;
+    background: transparent;
+    border: none;
+    padding: 25px 0px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#vitals-search th {
+    font-size: 12px;
+}

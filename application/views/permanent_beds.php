@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+$base_url = load_class('Config')->config['base_url'];
+echo '<input type="hidden" id="base" value="' . $base_url . '">';
+
+if ($this->input->get("success") == "true") {
+    echo '<div style="position: fixed;top: 60px;right: 20px; z-index: 1030;" class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><h4><i class="icon fa fa-check"></i> Success!</h4>Information has been updated successfully!</div>';
+}
+?>
+
+<html>
+<head>
+    <title>Permanent Beds List | <?php echo SITE_TITLE_TEXT; ?></title>
+    <?php $this->load->view('header'); ?>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+    <?php $this->load->view('main_header'); ?>
+    <!-- Left side column. contains the logo and sidebar -->
+
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                Permanent Beds List
+                <small></small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="<?php echo base_url('/dashboard'); ?>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                <li><a href="<?php echo base_url('/dashboard/master_list/'); ?>"> Master List</a></li>
+                <li><a href="<?php echo base_url('/dashboard/permanent_bedslist/'); ?>"> Beds List</a></li>
+            </ol>
+            <br>
+            <div class="row">
+                <div class="col-md-4 col-sm-6 col-xs-12" style="float: right;">
+                    <div class="info-box">
+            <span class="info-box-icon bg-green"><i class="fa fa-bed" aria-hidden="true"></i>
+</span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Admission Statistics</span>
+                            <span style="font-size: 20px"><?php $patcount = $this->model_hms->patient_counter(); if(!empty($patcount)){ echo $patcount->counter; } ?></span> Patient(s) / <span
+                                        style="font-size: 20px"><?php $bedcount = $this->model_hms->bed_counter(); if(!empty($bedcount)){ echo $bedcount->counter; } ?></span> Bed(s)</span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Main content -->
+
+        <section class="content">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Search Filters</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                    class="fa fa-minus"></i></button>
+                    </div>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Search By Ward Name / Number</label>
+                                <form name="search-by-ward-number" id="search-by-ward-number" method="get"
+                                      action="#details">
+                                    <select class="wardName-select form-control" name="search_by_wardnumber"
+                                            style="width: 100%;" tabindex="4">
+                                    </select>
+                                </form>
+                            </div>
+                        </div>
+
+                        <?php
+                        if (!empty($ward_beds_list)) { ?>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                <label>Status</label><br>
+                                <span class="label label-primary custom-span" style="margin-left: 15px !important; margin-right: 15px !important; padding: 10px !important;" id="color-available">Available
+                                <span class="badge bg-gray"> <?php  $count = $this->model_hms->count_available_beds($this->input->get("search_by_wardnumber")); echo $count->counter; ?></span>
+                                </span>
+                                <span class="label label-primary custom-span" style="margin-left: 15px !important; margin-right: 15px !important; padding: 10px !important;" id="color-occupied">Occupied
+                                 <span class="badge bg-gray">  <?php  $count = $this->model_hms->count_occupied_beds($this->input->get("search_by_wardnumber")); echo $count->counter; ?></span>
+                                </span>
+                                <span class="label label-primary custom-span" style="margin-left: 15px !important; margin-right: 15px !important; padding: 10px !important;"id="color-blocked">Blocked
+                                 <span class="badge bg-gray">  <?php  $count = $this->model_hms->count_blocked_beds($this->input->get("search_by_wardnumber")); echo $count->counter; ?></span>
+                                </span>
+                                <span class="label label-primary custom-span" style="margin-left: 15px !important; margin-right: 15px !important; padding: 10px !important; "id="color-temp-bed">Extra Bed
+                                <span class="badge bg-gray temp-bed-number">  <?php  $count = $this->model_hms->count_temp_beds($this->input->get("search_by_wardnumber")); echo $count->counter; ?></span>
+                                </span>
+                                </div>
+                            </div>
+                        <?php } ?>
+                        </div>
+                    </div>
+
+                </div>
+
+            <?php
+            if (!empty($ward_beds_list)) { ?>
+            <div class="box box-primary">
+                    <div class="box-header with-border" id="details">
+                        <h3 class="box-title">Search Results</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                        class="fa fa-minus"></i></button>
+                        </div>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-sm-offset-10 col-xs-12">
+                                <input type="number" id="extra-bed" value="1" style="display: none;">
+                                <button type="button" class="btn btn-primary btn-flat" id="permanent-bed-btn"><i class="fa fa-plus" aria-hidden="true"></i> Add Permanent Beds</button>
+                            </div>
+                        </div>
+                        <div class="row">
+
+
+                                    <div class="row">
+                                        <div class="col-sm-12 testbeds">
+                                            <?php foreach ($ward_beds_list as $b_key) { ?>
+                                            <div class="col-sm-3 col-xs-4 allbeds">
+                                            <span class="label label-primary custom-span infopopover" id="<?php $statusColor = $this->model_hms->bed_colors($b_key['bedStatus']); echo $statusColor; ?>"><?php if($b_key['bedStatus'] == 'Extra Bed') { echo "Extra Bed. ". $b_key['bedNo']; } else { echo "Bed No. " . $b_key['bedNo']; } ?>
+                                            <input type="hidden" class="bedID" value="<?php echo $b_key['bedId']; ?>">
+                                            <input type="hidden" class="bedNo" value="<?php echo $b_key['bedNo']; ?>">
+                                            <input type="hidden" class="wardId" value="<?php echo $this->input->get('search_by_wardnumber'); ?>">
+                                            </span>
+                                            </div>
+                                            <?php } ?>
+                                        </div>
+                                    </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+
+            <?php if (!empty($search_by_status_list)) { ?>
+
+            <div class="box box-primary">
+                    <div class="box-header with-border" id="details">
+                        <h3 class="box-title">Search Results</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                        class="fa fa-minus"></i></button>
+                        </div>
+                    </div><!-- /.box-header -->
+                    <div class="box-body">
+<!--                        <div class="row">-->
+<!--                            <div class="col-sm-offset-10 col-xs-12">-->
+<!--                                <input type="number" id="extra-bed" value="1" style="display: none;">-->
+<!--                                <button type="button" class="btn btn-primary btn-flat" id="bed-btn"><i class="fa fa-plus" aria-hidden="true"></i> Add Extra Beds</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                        <div class="row">
+
+
+                                    <div class="row">
+                                        <div class="col-sm-12 testbeds">
+                                            <?php foreach ($search_by_status_list as $b_key) { ?>
+                <div class="col-sm-3 col-xs-4 allbeds">
+                                            <span class="label label-primary custom-span infopopover" id="<?php $statusColor = $this->model_hms->bed_colors($b_key['bedStatus']); echo $statusColor; ?>"><?php if($b_key['bedStatus'] == 'Extra Bed') { echo "Extra Bed. ". $b_key['bedNo']; } else { echo "Bed No. " . $b_key['bedNo']; } ?>
+                                                <input type="hidden" class="bedID" value="<?php echo $b_key['bedId']; ?>">
+                                            <input type="hidden" class="bedNo" value="<?php echo $b_key['bedNo']; ?>">
+                                            <input type="hidden" class="wardId" value="<?php echo $this->input->get('search_by_wardnumber'); ?>">
+                                            </span>
+                </div>
+            <?php } ?>
+
+    </div>
+</div>
+
+
+</div>
+</div>
+</div>
+            <?php } ?>
+        </section>
+
+        <div class="modal fade" tabindex="-1" role="dialog" id="delete-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+
+                        <h4 class="modal-title">Confirmation Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Do you want to permanently delete the information of this patient?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn bg-default hide-patient-delete-modal">No</button>
+                        <button type="button" class="btn bg-blue confirm-delete-patient">Yes</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+            <b>Version</b> 2.0
+        </div>
+        <strong>Copyright &copy;  <?php echo date("Y"); ?> <a target="_blank" href="<?php echo SITEURL; ?>"><?php echo COMPANYNAME; ?></a>.</strong> All rights
+        reserved.
+    </footer>
+    <div class="control-sidebar-bg"></div>
+</div>
+<?php $this->load->view('footer'); ?>
+</body>
+</html>
