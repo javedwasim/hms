@@ -32,7 +32,7 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
                            }else{
                                $link = '';
                            }
-                           echo '<a class="ahref '.$child->child_menu_url.'" href="javascript:void(0)" id="'.$child->child_menu_id.'">';
+                           echo '<a class="ahref" href="javascript:void(0)" data-href = '.$child->child_menu_url.' id="'.$child->child_menu_id.'">';
                            echo '<i class="fa fa-circle-o"></i>';
                            echo $child->child_menu_name;
                            echo '</a>'; ?>
@@ -57,8 +57,9 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
     </li>
 <?php } ?>
 <script>
-    $('.bedslist').click(function(){
-        get_patient_accounts('bedslist');
+    $('.ahref').click(function(){
+        var func_call = $(this).attr('data-href');
+        get_patient_accounts(func_call);
     });
 </script>
 <script>

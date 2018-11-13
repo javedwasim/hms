@@ -139,8 +139,7 @@
                                             <input type="hidden" class="bedID"
                                                    value="<?php echo $b_key['bedId']; ?>">
                                         <input type="hidden" class="bedNo" value="<?php echo $b_key['bedNo']; ?>">
-                                        <input type="hidden" class="wardId"
-                                               value="<?php echo $this->input->get('search_by_wardnumber'); ?>">
+                                        <input type="hidden" class="wardId" value="<?php echo isset($fdata['ward_id'])?$fdata['ward_id']:''; ?>">
                                         </span>
                                 </div>
                             <?php } ?>
@@ -208,3 +207,129 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
+<script>
+    $('.infopopover').hover(function (e) {
+        $('.infopopover').not(this).popover('hide');
+    });
+    $('.infopopover').focus(function (e) {
+        $('.infopopover').not(this).popover('hide');
+    });
+    $('.custom-delete-span').click(function (e) {
+        console.debug(e);
+    });
+
+    setTimeout(function () {
+        $('.infopopover').popover({
+            content: function () {
+                var closest = $(this).closest('span');
+                var bedId = closest.find('.bedID').val();
+                //console.log(closest + bedId);
+                return details_in_popup(bedId);
+            },
+            html: true,
+            title: 'Bed Details' + '<button type="button" class="close custom-close" data-dismiss="alert" aria-hidden="true">×</button>',
+            placement: 'top',
+            delay: {hide: 100000},
+            trigger: "hover focus"
+        });
+    }, 200);
+    $('.infopopover').on('shown.bs.popover', function () {
+        $('.custom-close').on('click', function () {
+            $('.infopopover').popover('hide');
+        });
+    });
+
+    function details_in_popup(bedParam) {
+
+        $.ajax({
+            url: base_url + "/dashboard/search/?search_by_bed=" + bedParam,
+            delay: 250,
+            async: false,
+            success: function (response) {
+                data = response
+            }
+        });
+        $.ajax({
+            url: base_url + "/dashboard/get_bed_status_controller/?bedId=" + bedParam,
+            delay: 250,
+            async: false,
+            success: function (response) {
+                bedData = response
+            }
+        });
+        console.debug(bedData);
+        var parser;
+
+        try {
+
+            parser = JSON.parse(data);
+            if (!parser.hasOwnProperty('bedStatus')) {
+                return '<label><b>MR#: </b></label>&nbsp;' + parser.regNo + '<br>' +
+                    '<label><b>Patient Name: </b></label>&nbsp;' + parser.patName + '<br>' +
+                    '<label><b>' + parser.patNoKType + ': </b></label>&nbsp;' + parser.patNoK + '<br>' +
+                    '<label><b>Ward#: </b></label>&nbsp;' + parser.patward_id + '<br>' +
+                    '<label><b>Bed#: </b></label>&nbsp;' + parser.patbed_id + '<br>' +
+                    '<label><b>Patient Chart: </b></label>&nbsp;' + '<a href="' + base_url + 'dashboard/patient_chart?search_by_cnic=' + parser.regNo + '" target="_blank">View Patient Chart</a>';
+            }
+            if (parser.hasOwnProperty('bedStatus')) {
+
+                if (parser.bedStatus == 'Extra Bed') {
+                    return '<label>' +
+                        '<b>Ward#: </b>' +
+                        '</label>' +
+                        '&nbsp;' + parser.wardId + '<br>' +
+                        '<label class="lblbed"><b>Bed#: </b>' +
+                        '</label>' +
+                        '&nbsp;' + parser.bedNo + '<br>' +
+                        '<input type="hidden" class="pbedNo" value="' + parser.bedId + '">' +
+                        '<label><b>Status: </b>' +
+                        '</label>' +
+                        '&nbsp;' + parser.bedStatus + '<br>' +
+                        '<a class="label label-primary custom-delete-span">Delete Extra Bed</a>';
+                }
+                else {
+
+
+                    if (bedData == 0) {
+                        //alert(bedData);
+                        //  $('.markasblocked').removeAttr('checked');
+                        return '<label>' +
+                            '<b>Ward#: </b>' +
+                            '</label>' +
+                            '&nbsp;' + parser.wardId + '<br>' +
+                            '<label><b>Bed#: </b>' +
+                            '</label>' +
+                            '&nbsp;' + parser.bedNo + '<br>' +
+                            '<input type="hidden" class="pbedNo" value="' + parser.bedId + '">' +
+                            '<label><b>Status: </b>' +
+                            '</label>' +
+                            '&nbsp;' + parser.bedStatus + '<br>' +
+                            '<label><b>Mark as Blocked/ Unblocked: </b>' +
+                            '</label>' +
+                            '&nbsp;' + '<input type="checkbox" class="markasblocked" checked>';
+                    }
+                    else {
+                        return '<label>' +
+                            '<b>Ward#: </b>' +
+                            '</label>' +
+                            '&nbsp;' + parser.wardId + '<br>' +
+                            '<label><b>Bed#: </b>' +
+                            '</label>' +
+                            '&nbsp;' + parser.bedNo + '<br>' +
+                            '<input type="hidden" class="pbedNo" value="' + parser.bedId + '">' +
+                            '<label><b>Status: </b>' +
+                            '</label>' +
+                            '&nbsp;' + parser.bedStatus + '<br>' +
+                            '<label><b>Mark as Blocked/ Unblocked: </b>' +
+                            '</label>' +
+                            '&nbsp;' + '<input type="checkbox" class="markasblocked">';
+                    }
+                }
+            }
+
+        }
+        catch (e) {
+            return 'JSON Error!';
+        }
+    }
+</script>
