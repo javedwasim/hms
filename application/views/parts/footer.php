@@ -66,6 +66,9 @@
 <!-- AdminLTE for demo purposes -->
 <script src="<?php echo base_url('/assets/dist/js/demo.js'); ?>"></script>
 <script src="<?php echo base_url('/assets/dist/js/main.js'); ?>"></script>
+
+<script type="text/javascript" src="<?php echo base_url(); ?>assets/plugins/toster/build/toastr.min.js"></script>
+
 <script src="<?php echo base_url('/assets/dist/js/script.js'); ?>"></script>
 </body>
 </html>

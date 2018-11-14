@@ -7,12 +7,10 @@ function get_patient_accounts(func_call) {
             if(response.result_html != ''){
                 $('.content-wrapper').empty();
                 $('.content-wrapper').append(response.result_html);
-                $('#title').html('SMS | Bedlist');
             }
         }
     });
 }
-
 $(document.body).on('change', '.bed-status', function(){
     var base_url = $('#base').val();
     var ward_id = $('.wardName-select').val();
@@ -32,7 +30,6 @@ $(document.body).on('change', '.bed-status', function(){
     });
 
 });
-
 $(document.body).on('click', '#bed-btn', function(){
     var lastBedNumber = $('.allbeds > span > .bedNo').last().val();
     var lastBedId = $('.allbeds > span > .bedID').last().val();
@@ -116,11 +113,59 @@ function addExtraBeds(lastBedParam, nExtraBedsParam, lastBedIdParam, wardParam) 
         $('.custom-close').on('click', function () {
             $('.infopopover').popover('hide');
         });
-        // $('.custom-delete-span').click(function () {
-        //     var closest = $(this).closest('.popover-content');
-        //     var bedId = closest.find('.pbedNo').val();
-        //     alert("from click"+ bedId);
-        // });
     });
-   // window.location.href = base_url + "dashboard/bedslist/?search_by_wardnumber=" + wardParam;
 }
+$(document.body).on('change', '.ward-name', function(){
+    var base_url = $('#base').val();
+    var ward_id = $('.ward-name').val();
+    $.ajax({
+        url: base_url+'dashboard/get_beds/'+ward_id,
+        type: 'get',
+        cache: false,
+        success: function(response) {
+            $('#bedNumber').empty();
+            $('#bedNumber').append(response);
+        }
+    });
+});
+
+$(document.body).on('click', '.delete-patient', function(){
+    $('#deleted_patient_id').val($(this).attr('data-href'));
+    $('#delete-modal').modal('show');
+});
+
+$(document.body).on('click', '.confirm-delete-patient', function(){
+    var base_url = $('#base').val();
+    var patient_id = $('#deleted_patient_id').val();
+    $.ajax({
+        url: base_url + "dashboard/delete_patient",
+        type: "post",
+        data: {patient_id: patient_id},
+        success: function (response) {
+            if(response.success){
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+                toastr["success"](response.message);
+            }else{
+                toastr["success"](response.message);
+            }
+        }
+    });
+    $('#delete-modal').modal('hide');
+});
+
+$(document.body).on('click', '.edit_patient_btn', function(){
+    var url = $(this).attr('data-href');
+    $.ajax({
+        url: url,
+        type: "get",
+        success: function (response) {
+            if(response.result_html != ''){
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+            }
+        }
+    });
+    $('#delete-modal').modal('hide');
+});
+

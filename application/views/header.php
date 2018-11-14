@@ -35,8 +35,8 @@
 <!-- binni code start here -->
 <link rel="icon" href="<?php echo base_url('assets/dist/img/favicon.ico'); ?>" />
 <link href="<?php echo base_url('/assets/plugins/timepicker/bootstrap-timepicker.min.css'); ?>" rel="stylesheet" />
-
-
+<!-- toster alerts -->
+<link href="<?php echo base_url(); ?>assets/plugins/toster/build/toastr.min.css" rel="stylesheet">
 <!-- binni code end here -->
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

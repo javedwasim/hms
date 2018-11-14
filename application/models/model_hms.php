@@ -19,6 +19,16 @@ class model_hms extends CI_Model {
     }
 
     public function insert_users_to_db($data) {
+        $admidate['datetime'] = $data['patAdmDate'] . " " . $data['AdmTime'];
+        $data['patAdmDate'] = date('Y-m-d H:i:s a', strtotime($admidate['datetime']));
+        $data['patChart_id'] = "22";
+        $data['patStatus'] = "Under Treatment";
+        unset($data['hour']);
+        unset($data['minute']);
+        unset($data['meridian']);
+        unset($data['AdmTime']);
+        unset($data['RegNumber']);
+        unset($data['patientphoto']);
         return $this->db->insert('admissiontbl', $data);
     }
 
@@ -40,7 +50,9 @@ class model_hms extends CI_Model {
     }
 
     public function delete_from_adm($id) {
-        return $this->db->delete('admissiontbl', array('regNo' => $id));
+        $this->db->delete('admissiontbl', array('regNo' => $id));
+        //echo $this->db->last_query();
+        return $this->db->affected_rows();
     }
 
     public function get_pat_pic($id) {
@@ -131,6 +143,7 @@ class model_hms extends CI_Model {
     }
 
     public function occupy_bed($wardId, $bedId) {
+        //echo $wardId.' '.$bedId;
         $query = $this->db->select('bedStatus AS status')
                 ->where('wardId', $wardId)
                 ->where('bedId', $bedId)
@@ -159,7 +172,6 @@ class model_hms extends CI_Model {
         $status = $query->row();
 
         if ($status->status == "Occupied Extra Bed") {
-
             $this->db->set('bedStatus', 'Extra Bed')
                     ->where('wardId', $wardId)
                     ->where('bedId', $bedId)
@@ -3210,6 +3222,91 @@ class model_hms extends CI_Model {
         $result = $this->db->get();
         if($result) {
             return $result->result_array();
+        } else {
+            return array();
+        }
+    }
+
+    public function get_disease_names(){
+        $this->db->select('*');
+        $this->db->from('diseasetbl');
+        $result = $this->db->get();
+        if($result) {
+            return $result->result_array();
+        } else {
+            return array();
+        }
+    }
+
+    public function get_available_beds($ward_id){
+        $result = $this->db->select("bedId AS id, bedNo AS name, bedStatus AS status")
+                ->where('wardId', $ward_id)
+                ->where('bedStatus!=', 'Blocked')
+                ->where('bedStatus!=', 'Occupied')
+                ->where('bedStatus!=', 'Occupied Extra Bed')
+                ->get('bedtbl');
+
+        if($result) {
+            return $result->result_array();
+        } else {
+            return array();
+        }
+    }
+
+    public function get_patients($filter) {
+        if(isset($filter['search_by_name'])){
+            $name =  $filter['search_by_name'];
+        }else{
+            $name = 0;
+        }
+        if(isset($filter['search_by_ward'])){
+            $ward =  $filter['search_by_ward'];
+        }else{
+            $ward = 0;
+        }
+        if(isset($filter['search_by_gender']) && !empty($filter['search_by_gender'])){
+            $fgender =  $filter['search_by_gender'];
+            $gender = 1;
+        }else{
+            $fgender='';
+            $gender = 0;
+        }
+        if(isset($filter['search_by_from_date'])&& !empty($filter['search_by_to_date'])){
+            $from =  $filter['search_by_from_date'];
+        }else{
+            $from = 0;
+        }
+
+        if(isset($filter['search_by_to_date']) && !empty($filter['search_by_to_date'])){
+            $to =  $filter['search_by_to_date'];
+        }else{
+            $to = 0;
+        }
+
+       $sql = "SELECT * FROM admissiontbl 
+                WHERE 1
+                AND ($name=0   OR regNo = $name)
+                AND ($ward=0  OR patward_id = $ward)
+                AND ($gender=0  OR patSex = '$fgender')
+                AND ($from=0  OR patAdmDate BETWEEN '$from' AND '$to')
+               ";
+        $result = $query = $this->db->query($sql);
+        if($result) {
+            return $result->result_array();
+        } else {
+            return array();
+        }
+    }
+
+
+    public function get_patient_byid($id) {
+        $this->db->select('*');
+        $this->db->from('admissiontbl');
+        $this->db->where('regNo',$id);
+        $this->db->limit(1);
+        $result = $this->db->get();
+        if($result) {
+            return $result->row_array();
         } else {
             return array();
         }

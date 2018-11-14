@@ -1226,7 +1226,7 @@ $(document).ready(function () {
     });
     var deltr;
     var delpatuid;
-    $(".delete-patient").click(function () {
+    $(".delete-patients").click(function () {
         deltr = $(this).closest('tr');
         delpatuid = deltr.find('#regNo').text();
         $('#delete-modal').modal('show');

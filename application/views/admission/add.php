@@ -36,7 +36,7 @@
 <!-- Main content -->
 <section class="content">
     <form action="<?php echo base_url('dashboard/insert_user_db'); ?>" class="submit-form" method="post"
-          enctype="multipart/form-data">
+          enctype="multipart/form-data" id="add_patient_form">
         <div class="box  box-primary">
             <div class="box-header with-border">
                 <h3 class="box-title">Patient Personal Information</h3>
@@ -50,20 +50,15 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>MR#</label>
-                            <input class="form-control" type="text"
-                                   name="RegNumber" id="regName" placeholder="MR#"
-                                   value="<?php if (!empty($reg_num)) {
-                                       foreach ($reg_num as $reg) {
-                                           echo $reg["regNo"] + 1;
-                                       }
-                                   } ?>" disabled>
+                            <input class="form-control" type="text" name="RegNumber" id="regName" placeholder="MR#" readonly
+                                   value="<?php if (!empty($reg_num)) { foreach ($reg_num as $reg) {  echo $reg["regNo"] + 1; } } ?>">
                         </div><!-- /.form-group -->
                     </div><!-- /.col -->
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Emergency/OPD Number</label>
-                            <input tabindex=1 class="form-control" maxlength="12" type="text" id="emNo"
-                                   name="emNo" placeholder="Type Number"
+                            <input tabindex=1 class="form-control" maxlength="12" type="text" id="emergency_no"
+                                   name="emergency_no" placeholder="Type Number"
                                    onkeypress="return /\d/.test(String.fromCharCode(((event||window.event).which||(event||window.event).which)));"/>
                         </div><!-- /.form-group -->
 
@@ -71,8 +66,8 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>Admission Number</label>
-                            <input tabindex=2 class="form-control" maxlength="12" type="text" id="admNo"
-                                   name="admNo" placeholder="Type Number"
+                            <input tabindex=2 class="form-control" maxlength="12" type="text" id="admi_no"
+                                   name="admi_no" placeholder="Type Number"
                                    onkeypress="return /\d/.test(String.fromCharCode(((event||window.event).which||(event||window.event).which)));"/>
                         </div><!-- /.form-group -->
                     </div><!-- /.col -->
@@ -100,7 +95,7 @@
                             </div>
                             <div class="col-md-8" style="padding: 0">
                                 <input tabindex=5 class="form-control" maxlength="15" required="required"
-                                       type="text" id="guardianName" name="patNoKName"
+                                       type="text" id="guardianName" name="patNoK"
                                        placeholder="Enter name"/>
                             </div>
                         </div><!-- /.form-group -->
@@ -109,12 +104,12 @@
                         <div class="form-group">
                             <label>Sex</label>
                             <br>
-                            <input type="radio" name="sex" class="custom-radio"
+                            <input type="radio" name="patSex" class="custom-radio"
                                    id="sex-male" value="Male" checked="checked"><label class="radio-labels">
                                 Male</label>
-                            <input type="radio" name="sex" class="custom-radio"
+                            <input type="radio" name="patSex" class="custom-radio"
                                    id="sex-female" value="Female"><label class="radio-labels"> Female</label>
-                            <input type="radio" name="sex" class="custom-radio"
+                            <input type="radio" name="patSex" class="custom-radio"
                                    id="sex-other" value="Other"><label class="radio-labels"> Other</label>
                         </div><!-- /.form-group -->
                     </div><!-- /.col -->
@@ -125,25 +120,19 @@
                             <label>Age in years</label>
                             <input tabindex=6 class="form-control" maxlength="3" type="text" name="patAge"
                                    id="patAge" placeholder="Years">
-                            <!--                                    <div class="input-group date">
-                                                            <div class="input-group-addon">
-                                                                <i class="fa fa-calendar"></i>
-                                                            </div>
-                                                            <input tabindex=6 type="text" class="form-control" id="datepicker" name="patDoB" placeholder="e.g. DD-MM-YYYY">
-                                                        </div>-->
                         </div><!-- /.form-group -->
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>Months</label>
-                            <input tabindex=7 class="form-control" maxlength="2" type="text" name="patAgemonth"
+                            <input tabindex=7 class="form-control" maxlength="2" type="text" name="patMonthAge"
                                    placeholder="months">
                         </div>
                     </div><!-- /.col -->
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>Days</label>
-                            <input tabindex=8 class="form-control" maxlength="2" type="text" name="patAgedays"
+                            <input tabindex=8 class="form-control" maxlength="2" type="text" name="patDaysAge"
                                    placeholder="Days">
                         </div>
                     </div><!-- /.col -->
@@ -153,7 +142,7 @@
                         <label>Select Blood Group</label>
                         <div class="form-group">
                             <select class="form-control bld-grp" style="width: 100%;"
-                                    tabindex="9" name="patBldGrp" id="id9">
+                                    tabindex="9" name="patBldGrp">
                                 <option></option>
                                 <option value="A+VE">A+VE</option>
                                 <option value="A-VE">A-VE</option>
@@ -170,16 +159,16 @@
                         <div class="form-group">
                             <div class="col-md-9" style="padding: 0">
                                 <label>Disease</label>
-                                <select tabindex=10 class="form-control disease" style="width: 100%;"
-                                        name="patDisease" id="id10">
+                                <select tabindex=10 class="form-control disease select2" style="width: 100%;" name="patDisease_id" id="id10">
+                                    <option value="">Please select</option>
+                                    <?php foreach ($diseases as $disease): ?>
+                                        <option value="<?php echo $disease['disease_id']; ?>"><?php echo $disease['disease_name']; ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="col-md-3" style="margin-top: 25px;padding: 0">
-                                <a href="<?php echo base_url('/dashboard/insert_diseases'); ?>"
-                                   class="btn btn-default btn-sm" style="font-size: 10px;padding: 8px 10px;">Add
-                                    disease</a>
+                                <a href="<?php echo base_url('/dashboard/insert_diseases'); ?>" class="btn btn-default btn-sm" style="font-size: 10px;padding: 8px 10px;">Add disease</a>
                             </div>
-
                         </div>
                     </div><!-- /.col -->
                     <div class="col-md-3">
@@ -190,7 +179,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>CNIC</label>
-                            <input tabindex=12 class="form-control" maxlength="15" type="text" name="patCnic"
+                            <input tabindex=12 class="form-control" maxlength="15" type="text" name="patCNIC"
                                    id="cnic" placeholder="Type CNIC number" maxlength="15" autocomplete="off"
                                    onkeypress="return /\d/.test(String.fromCharCode(((event||window.event).which||(event||window.event).which)));"/>
                         </div><!-- /.form-group -->
@@ -209,7 +198,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>City</label>
-                            <select class="form-control patcity select2" name="patCity">
+                            <select class="form-control patcity select2" name="patcity">
                                 <option value="">Please select</option>
                                 <?php foreach ($cities as $city): ?>
                                     <option value="<?php echo $city['city']; ?>"><?php echo $city['city']; ?></option>
@@ -231,13 +220,12 @@
                         <div class="form-group">
                             <label>Entitled</label>
                             <br>
-                            <input tabindex=16 type="radio" name="entitled"
+                            <input tabindex=16 type="radio" name="patEntitled"
                                    class="custom-radio entitled-rad" id="entitled-true" value="Yes"><label
                                 class="radio-labels">Yes</label>
-                            <input type="radio" name="entitled"
-                                   class="custom-radio entitled-rad" id="entitled-false" value="No"
-                                   checked="checked"><label
-                                class="radio-labels"> No</label>
+                            <input type="radio" name="patEntitled"
+                                   class="custom-radio entitled-rad" id="entitled-false" value="No" checked="checked">
+                            <label class="radio-labels"> No</label>
                             <br>
                             <label class="customlabel hide-label">(If Yes attach valid documents)</label>
                         </div><!-- /.form-group -->
@@ -294,7 +282,7 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Contact Number</label>
-                        <input class="form-control" type="text" maxlength="11" name="garPhone"
+                        <input class="form-control" type="text" maxlength="11" name="garContact"
                                placeholder="Type Phone Number"
                                onkeypress="return /\d/.test(String.fromCharCode(((event||window.event).which||(event||window.event).which)));"
                                maxlength="11" id="id19" tabindex=20/>
@@ -303,9 +291,8 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Relationship</label>
-                        <select class="form-control gar-relation" style="width: 100%;" name="garRel" id="id20"
-                                tabindex=21>
-                            <option></option>
+                        <select class="form-control gar-relation" style="width: 100%;" name="garRelation" id="id20" tabindex=21>
+                            <option value="">Please select</option>
                             <option value="Father">Father</option>
                             <option value="Mother">Mother</option>
                             <option value="Brother">Brother</option>
@@ -346,7 +333,7 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Admitted Through</label>
-                        <select class="form-control admitted-th" style="width: 100%;" name="admitted-through"
+                        <select class="form-control admitted-th" style="width: 100%;" name="patunit_Id"
                                 id="id21" tabindex="22">
                             <option></option>
                             <option value="OPD">OPD</option>
@@ -365,17 +352,19 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Ward Number</label>
-                        <select tabindex=24 class="form-control ward-name" style="width: 100%;" name="wardName"
-                                maxlength="10" id="id23">
+                        <select class="form-control ward-name select2"  name="patward_id" required>
+                            <option value="">Please select</option>
+                            <?php foreach ($wards as $ward): ?>
+                                <option value="<?php echo $ward['wardId']; ?>"><?php echo $ward['wardName']; ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                 </div><!-- /.col -->
                 <div class="col-md-3">
                     <div class="form-group">
                         <label>Bed Number</label>
-                        <select class="form-control beds" style="width: 100%;" name="bedNumber" id="id24"
-                                tabindex=25>
-                            <!-- Male Ward Beds -->
+                        <select class="form-control beds select2" id="bedNumber" name="patbed_id" required>
+
                         </select>
                     </div>
                 </div><!-- /.col -->
@@ -388,12 +377,11 @@
                             </div>
                             <div class="col-md-6" style="padding: 0;">
                                 <input tabindex=25 type="text" class="form-control pull-right"
-                                       id="datepicker-adm" name="AdmDate" autocomplete="off"
-                                       placeholder="Set Date">
+                                       id="datepicker-adm" name="patAdmDate" autocomplete="off" placeholder="Set Date" required>
                             </div>
                             <div class="col-md-6" style="padding: 0;">
-                                <input type="text" class="form-control pull-right" id="timepicker-adm"
-                                       name="AdmTime" placeholder="Set Time" tabindex=26/>
+                                <input type="text" class="form-control pull-right"
+                                       id="timepicker-adm" name="AdmTime" placeholder="Set Time" required>
                             </div>
                         </div>
                     </div>
@@ -402,23 +390,19 @@
                     <div class="form-group">
                         <label>Is a Free Care Patient?</label>
                         <br>
-                        <input type="radio" name="freeCarePatient"
-                               class="custom-radio freecare-rad" value="1" checked><label
-                            class="radio-labels">Yes</label>
-                        <input type="radio" name="freeCarePatient"
-                               class="custom-radio freecare-rad" value="0"><label
-                            class="radio-labels"> No</label>
+                        <input type="radio" name="freeCarePatient" class="custom-radio freecare-rad" value="1" checked>
+                        <label class="radio-labels">Yes</label>
+                        <input type="radio" name="freeCarePatient" class="custom-radio freecare-rad" value="0">
+                        <label  class="radio-labels"> No</label>
                         <br>
                     </div><!-- /.form-group -->
                 </div>
 
                 <div class="col-md-3">
                     <div class="form-group">
-                        <!--                        <input type="submit" class="btn bg-blue margin" value ="Admit Patient &amp; Print Adm. Sheet"</input>-->
-                        <button type="button" class="btn bg-blue margin submit-btn custom-submit-btn"><i
-                                class="fa fa-user-plus" aria-hidden="true"></i> &nbsp;Admit Patient
-                        </button>
-
+                        <!--<input type="submit" class="btn bg-blue margin" value ="Admit Patient &amp; Print Adm. Sheet"</input>-->
+                        <button type="submit" class="btn bg-blue margin submit-btn custom-submit-btn">
+                            <i class="fa fa-user-plus" aria-hidden="true"></i> &nbsp;Admit Patient</button>
                     </div>
                 </div><!-- /.col -->
             </div>
@@ -438,8 +422,7 @@
                         <p>Do you want to save the admission sheet?</p>
                     </div>
                     <div class="modal-footer">
-                        <input type="submit" class="btn bg-blue" value="Save Information" tabindex=26/>
-
+                        <input type="submit" class="btn bg-blue" id="add_patient" value="Save Information">
                     </div>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
@@ -450,5 +433,44 @@
 <script>
     $(document).ready(function () {
         $('.select2').select2({});
+        $('#datepicker-adm').datepicker({
+            format: 'yyyy-mm-dd'
+        });
+        $('#timepicker-adm').timepicker({
+            defaultTime: false
+        });
+
+        $("#add_patient_form").on('submit',(function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "<?php echo base_url('dashboard/insert_user_db'); ?>",
+                type: "POST",
+                data:  new FormData(this),
+                contentType: false,
+                cache: false,
+                processData:false,
+                beforeSend : function()
+                {
+                    $("#err").fadeOut();
+                },
+                success: function(response)
+                {
+
+                    if(response.success)
+                    {
+                        toastr["success"](response.message);
+                        $("#add_patient_form")[0].reset();
+                    }
+                    else
+                    {
+                        toastr["error"](response.message);
+                    }
+                },
+                error: function(e)
+                {
+                    toastr["error"]('seem to be an error');
+                }
+            });
+        }));
     });
 </script>

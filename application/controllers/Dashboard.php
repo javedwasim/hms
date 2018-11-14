@@ -24,27 +24,67 @@ class dashboard extends CI_Controller {
         $this->load->model('model_hms');
         $this->load->helper('content-type');
         $this->load->helper('url');
+        $this->load->library('form_validation');
     }
 
     public function index() {
         $this->load->view('dashboard');
     }
 
-    public function new_admission() {
+    public function view_patients() {
+        $priv = $this->authentication->read('priv');
+        $access_checker = $this->model_hms->access_checker($priv, VIEW_ADMITTED_PATIENTS);
+        if ($access_checker == 1) {
+            $filter = $this->input->post();
+            $data['patients'] = $this->model_hms->get_patients($filter);
+            $data['wards'] = $this->model_hms->get_wards();
+            $data['filter'] = $filter;
+            $json['result_html'] = $this->load->view('admission/list',$data,true);
+        } else {
+            $this->insufficient_privileges();
+        }
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
+        }
+    }
 
+    public function new_admission() {
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, ALLOW_USER_TO_ADMIT);
         if ($access_checker == 1) {
             $data['reg_num'] = $this->model_hms->get_regNo();
             $data['cities'] = $this->model_hms->get_cities();
+            $data['diseases'] = $this->model_hms->get_disease_names();
+            $data['wards'] = $this->model_hms->get_wards();
             $json['result_html'] = $this->load->view('admission/add', $data,true);
         } else {
             $this->insufficient_privileges();
         }
-
         if ($this->input->is_ajax_request()) {
             set_content_type($json);
         }
+    }
+
+
+    public function edit_patient($patient_id) {
+        $priv = $this->authentication->read('priv');
+        $access_checker = $this->model_hms->access_checker($priv, DISCHARGE_PATIENTS);
+
+        if ($access_checker == 1) {
+            $data['reg_num'] = $this->model_hms->get_regNo();
+            $data['cities'] = $this->model_hms->get_cities();
+            $data['diseases'] = $this->model_hms->get_disease_names();
+            $data['wards'] = $this->model_hms->get_wards();
+            $data['patient_list'] = $this->model_hms->search_result_by_cnic($patient_id);
+            $json['result_html'] = $this->load->view('admission/add', $data,true);
+            if ($this->input->is_ajax_request()) {
+                set_content_type($json);
+            }
+
+        } else {
+            $this->insufficient_privileges();
+        }
+
     }
 
     public function shift_patient() {
@@ -58,109 +98,58 @@ class dashboard extends CI_Controller {
     }
 
     public function insert_user_db() {
-//        if (!empty($this->input->post('search_discharged_by_cnic'))) {
-//
-//            $regNo = $this->input->post('RegNumber');
-//            $udata['patName'] = $this->input->post('patName');
-//            $udata['patNoKType'] = $this->input->post('patNoKType');
-//            $udata['patNoK'] = $this->input->post('patNoKName');
-//            $udata['patDoB'] = $this->input->post('patDoB');
-//            $udata['patAge'] = $this->input->post('patAge');
-//            $udata['patBldGrp'] = $this->input->post('patBldGrp');
-//            $udata['patDisease_id'] = $this->input->post('patDisease');
-//            $udata['patSex'] = $this->input->post('sex');
-//            $udata['patCNIC'] = $this->input->post('patCnic');
-//            $udata['patAddress'] = $this->input->post('patAddress');
-//            $udata['patOccupation'] = $this->input->post('patOccupation');
-//            $udata['patPhone'] = $this->input->post('patPhone');
-//            $udata['patEntitled'] = $this->input->post('entitled');
-//            $udata['patunit_Id'] = $this->input->post('admitted-through');
-//            $udata['patShiftedFrom'] = $this->input->post('patShiftedFrom');
-//            $udata['patward_id'] = $this->input->post('wardName');
-//            $udata['patbed_id'] = $this->input->post('bedNumber');
-//            $udata['patAdmDate'] = $this->input->post('admDateTime');
-//            $udata['patChart_id'] = "22";
-//            $udata['patStatus'] = "Under Treatment";
-//            $udata['freeCarePatient'] = $this->input->post('freeCarePatient');
-//            $check = $this->patient_pic_upload($regNo);
-//            $readmitPatient = $this->model_hms->updatePreviousRecordForReAdmission($this->input->post('search_discharged_by_cnic'));
-//            $udata['previousRegno'] = "RID" . " - " . $this->input->post('search_discharged_by_cnic');
-//            if (!$check['error']) {
-//                $udata['patient_pic_path'] = $check;
-//            }
-//            $res = $this->model_hms->insert_users_to_db($udata);
-//            if ($res) {
-//                $bedUpdate = $this->model_hms->occupy_bed($this->input->post('wardName'), $this->input->post('bedNumber'));
-//                $base_url = load_class('Config')->config['base_url'];
-//                header('location:' . $base_url . "index.php/dashboard/new_admission?success=true");
-//            }
-//
-//        }
-//        else
-//        {
-        $regNo = $this->input->post('RegNumber');
-        $udata['patName'] = $this->input->post('patName');
-        $udata['emergency_no'] = $this->input->post('emNo');
-        $udata['admi_no'] = $this->input->post('admNo');
-        $udata['patNoKType'] = $this->input->post('patNoKType');
-        $udata['patNoK'] = $this->input->post('patNoKName');
-//        $udata['patDoB'] = $this->input->post('patDoB');
-        $udata['patAge'] = $this->input->post('patAge');
-        $udata['patMonthAge'] = $this->input->post('patAgemonth');
-        $udata['patDaysAge'] = $this->input->post('patAgedays');
-        $udata['patBldGrp'] = $this->input->post('patBldGrp');
-        $udata['patDisease_id'] = $this->input->post('patDisease');
-        $udata['patSex'] = $this->input->post('sex');
-        $udata['patCNIC'] = $this->input->post('patCnic');
-        $udata['patAddress'] = $this->input->post('patAddress');
-        $udata['patcity'] = $this->input->post('patCity');
-        $udata['patOccupation'] = $this->input->post('patOccupation');
-        $udata['patPhone'] = $this->input->post('patPhone');
-        $udata['patEntitled'] = $this->input->post('entitled');
-        $udata['patunit_Id'] = $this->input->post('admitted-through');
-        $udata['patShiftedFrom'] = $this->input->post('patShiftedFrom');
-        $udata['patward_id'] = $this->input->post('wardName');
-        $udata['patbed_id'] = $this->input->post('bedNumber');
-        $admidate['datetime'] = $this->input->post('AdmDate') . " " . $this->input->post('AdmTime');
-        $udata['patAdmDate'] = date('Y-m-d H:i:s a', strtotime($admidate['datetime']));
-        $udata['patChart_id'] = "22";
-        $udata['patStatus'] = "Under Treatment";
-        $udata['freeCarePatient'] = $this->input->post('freeCarePatient');
-        $udata['garName'] = $this->input->post('garName');
-        $udata['garCnic'] = $this->input->post('garCnic');
-        $udata['garContact'] = $this->input->post('garPhone');
-        $udata['garRelation'] = $this->input->post('garRel');
+        $this->load->library('form_validation');
+        $this->load->helper('security');
+        //rules for required fields e.g email should be unique
+        $this->form_validation->set_rules('patNoK', 'Next of kin', 'required|xss_clean');
+        $this->form_validation->set_rules('patward_id', 'Ward Number', 'required|xss_clean');
+        $this->form_validation->set_rules('patbed_id', 'Bed Number', 'required|xss_clean');
+        $this->form_validation->set_rules('patAdmDate', 'Admit date', 'required|xss_clean');
+        $this->form_validation->set_rules('AdmTime', 'Admit Time', 'required|xss_clean');
+        if ($this->form_validation->run() == FALSE) {
+            $json['error'] = true;
+            $json['message'] = validation_errors();
 
-        if ($this->input->post('wardName') == "4") {
-            date_default_timezone_set("Asia/Karachi");
-            $udata['sideRoomDate'] = date('Y-m-d');
+        }else{
+            $udata = $this->input->post();
+            $regNo = $this->input->post('RegNumber');
+            if ($this->input->post('wardName') == "4") {
+                date_default_timezone_set("Asia/Karachi");
+                $udata['sideRoomDate'] = date('Y-m-d');
+            }
+            if (!empty($_FILES['patientphoto']['name'])) {
+                $check = $this->patient_pic_upload($regNo);
+                $udata['patient_pic_path'] = $check;
+            }
+            $res = $this->model_hms->insert_users_to_db($udata);
+            if ($res) {
+                $this->model_hms->occupy_bed($udata['patward_id'], $udata['patbed_id']);
+                load_class('Config')->config['base_url'];
+                $json['success']=true;
+                $json['message']='Record has been created successfully.';
+            }else{
+                $json['error']=true;
+                $json['message']='Seem to be an error.';
+            }
         }
-        $check = $this->patient_pic_upload($regNo);
-        if (!$check['error']) {
-            $udata['patient_pic_path'] = $check;
+        if ($this->input->is_ajax_request()) {
+            $CI =& get_instance();
+            return $CI->output->set_content_type('application/json') //set Json header
+            ->set_output(json_encode($json));
         }
-        $res = $this->model_hms->insert_users_to_db($udata);
-        if ($res) {
-            $bedUpdate = $this->model_hms->occupy_bed($this->input->post('wardName'), $this->input->post('bedNumber'));
 
-            $base_url = load_class('Config')->config['base_url'];
-            header('location:' . $base_url . "index.php/dashboard/new_admission?success=true");
-        }
-        //}
     }
 
     public function patient_revisit() {
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, CAN_REVISIT);
         if ($access_checker == 1) {
-
             if (!empty($this->input->get("search_discharged_by_cnic"))) {
                 $data['reg_num'] = $this->model_hms->get_regNo();
                 $data['patient_list'] = $this->model_hms->search_discharged_result_by_cnic($this->input->get("search_discharged_by_cnic"));
                 $data['old_regNo'] = $this->input->get("search_discharged_by_cnic");
                 $this->load->view('revisit', $data);
             }
-
             if (empty($this->input->get())) {
                 $this->load->view('revisit');
 //            $base_url = load_class('Config')->config['base_url'];
@@ -476,42 +465,33 @@ class dashboard extends CI_Controller {
 //        }
     }
 
-    public function view_patients() {
+
+
+    public function delete_patient() {
+        $getBedWard = $this->model_hms->get_bed_ward_id_by_cnic($this->input->post("patient_id"));
+        $bedUpdate = $this->model_hms->vacate_bed($getBedWard->wardNo, $getBedWard->bedNo);
+        $queryCheck = $this->model_hms->delete_from_adm($this->input->post("patient_id"));
+        if ($queryCheck) {
+            $json['success'] = true;
+            $json['message'] = "Record successfully deleted.";
+        } else {
+            $json['error'] = true;
+            $json['message'] = "Seems to an error.";
+        }
+
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, VIEW_ADMITTED_PATIENTS);
         if ($access_checker == 1) {
-            if (!empty($this->input->get("search_by_cnic"))) {
-                $data['patient_list'] = $this->model_hms->search_result_by_cnic($this->input->get("search_by_cnic"));
-                $this->load->view('view_patients', $data);
-            } elseif (!empty($this->input->get("search_by_ward"))) {
-                $data['patient_list'] = $this->model_hms->search_result_by_ward($this->input->get("search_by_ward"));
-                $this->load->view('view_patients', $data);
-            } elseif (!empty($this->input->get("search_by_gender"))) {
-                $data['patient_list'] = $this->model_hms->search_result_by_gender($this->input->get("search_by_gender"));
-                $this->load->view('view_patients', $data);
-            } elseif (!empty($this->input->get("search_by_to_date")) && !empty($this->input->get("search_by_from_date"))) {
-                $todate = $this->input->get("search_by_to_date");
-                $fromdate = $this->input->get("search_by_from_date");
-                $todate = date('Y-m-d', strtotime($todate));
-                $fromdate = date('Y-m-d', strtotime($fromdate));
-                $data['patient_list'] = $this->model_hms->search_result_by_date($todate, $fromdate);
-                $this->load->view('view_patients', $data);
-            } else {
-                $this->load->view('view_patients');
-            }
+            $filter = $this->input->post();
+            $data['patients'] = $this->model_hms->get_patients($filter);
+            $data['wards'] = $this->model_hms->get_wards();
+            $data['filter'] = $filter;
+            $json['result_html'] = $this->load->view('admission/list',$data,true);
         } else {
             $this->insufficient_privileges();
         }
-    }
-
-    public function delete_patient() {
-        $getBedWard = $this->model_hms->get_bed_ward_id_by_cnic($this->input->post("search_by_cnic"));
-        $bedUpdate = $this->model_hms->vacate_bed($getBedWard->wardNo, $getBedWard->bedNo);
-        $queryCheck = $this->model_hms->delete_from_adm($this->input->post("search_by_cnic"));
-        if ($queryCheck) {
-            echo "success!";
-        } else {
-            echo "failed";
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
         }
     }
 
@@ -649,23 +629,7 @@ class dashboard extends CI_Controller {
         }
     }
 
-    public function edit_patient() {
-        $priv = $this->authentication->read('priv');
-        $access_checker = $this->model_hms->access_checker($priv, DISCHARGE_PATIENTS);
-        if ($access_checker == 1) {
 
-            if (!empty($this->input->get("search_by_cnic"))) {
-                $data['patient_list'] = $this->model_hms->search_result_by_cnic($this->input->get("search_by_cnic"));
-                $this->load->view('edit_patient', $data);
-            }
-            if (empty($this->input->get())) {
-                $base_url = load_class('Config')->config['base_url'];
-                header('location:' . $base_url . "index.php/dashboard/view_patients");
-            }
-        } else {
-            $this->insufficient_privileges();
-        }
-    }
 
     public function update() {
         $old_patward_id = $this->input->post('old_patward_id');
@@ -1099,20 +1063,21 @@ class dashboard extends CI_Controller {
     }
 
     public function patient_pic_upload($patID) {
+        $filename = strtolower(str_replace(' ', '-', $patID . '-' . uniqid()));
         $config['upload_path'] = "./assets/dist/img/patient_photo";
         $config['allowed_types'] = 'gif|jpg|png';
         $config['max_size'] = 5000;
         $config['max_width'] = 5000;
         $config['max_height'] = 5000;
+        $config['file_name'] = $filename;
         $this->load->library('upload', $config);
         if (!$this->upload->do_upload('patientphoto')) {
             $error = array('error' => $this->upload->display_errors());
             return $error;
         } else {
-            $filename = $this->upload->data('file_name');
+            $fileName = $this->upload->data('file_name');
             $data = array('upload_data' => $this->upload->data());
-            return $filename;
-            //print_r($data['uploaded']);
+            return $fileName;
         }
     }
 
@@ -3540,6 +3505,22 @@ class dashboard extends CI_Controller {
        
     }
 
+    public function get_beds($ward_id){
+        $beds  = $this->model_hms->get_available_beds($ward_id);
+        $options = '';
+        $options.="<option value=''>Select a bed</option>";
+        foreach ($beds as $bed){
+            $id = $bed['id'];
+            if ($bed['status'] == "Extra Bed") {
+                $bed_number = "Extra Bed. ".$bed['name'];
+            } else {
+                $bed_number = "Bed No. ".$bed['name'];
+            }
+            $options.="<option value='$id'>$bed_number</option>";
+        }
+        echo  $options;
+    }
+
 }
 
 /////////////////////////////////////////// Date generator class ////////////////////////////////////////
@@ -3585,5 +3566,6 @@ class DateRangeIterator implements Iterator {
     function current() {
         return date($this->format, $this->current);
     }
+
 
 }
