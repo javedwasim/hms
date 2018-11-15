@@ -98,6 +98,50 @@ class dashboard extends CI_Controller {
         }
     }
 
+    public function insert_discharge_patient(){
+        $this->load->library('form_validation');
+        $this->load->helper('security');
+        //rules for required fields e.g email should be unique
+        $this->form_validation->set_rules('patNoK', 'Next of kin', 'required|xss_clean');
+        $this->form_validation->set_rules('patward_id', 'Ward Number', 'required|xss_clean');
+        $this->form_validation->set_rules('patbed_id', 'Bed Number', 'required|xss_clean');
+        $this->form_validation->set_rules('patAdmDate', 'Admit date', 'required|xss_clean');
+        $this->form_validation->set_rules('AdmTime', 'Admit Time', 'required|xss_clean');
+        if ($this->form_validation->run() == FALSE) {
+            $json['error'] = true;
+            $json['message'] = validation_errors();
+
+        }else{
+            $udata = $this->input->post();
+            $regNo = $this->input->post('RegNumber');
+            if ($this->input->post('wardName') == "4") {
+                date_default_timezone_set("Asia/Karachi");
+                $udata['sideRoomDate'] = date('Y-m-d');
+            }
+            if (!empty($_FILES['patientphoto']['name'])) {
+                $check = $this->patient_pic_upload($regNo);
+                $udata['patient_pic_path'] = $check;
+            }
+            unset($udata['patient_reg_no']);
+            $res = $this->model_hms->insert_users_to_db($udata);
+            if ($res) {
+                $this->model_hms->occupy_bed($udata['patward_id'], $udata['patbed_id']);
+                load_class('Config')->config['base_url'];
+                $json['success']=true;
+                $json['message']='Record has been created successfully.';
+            }else{
+                $json['error']=true;
+                $json['message']='Seem to be an error.';
+            }
+
+        }
+        if ($this->input->is_ajax_request()) {
+            $CI =& get_instance();
+            return $CI->output->set_content_type('application/json') //set Json header
+            ->set_output(json_encode($json));
+        }
+    }
+
     public function insert_user_db() {
         $this->load->library('form_validation');
         $this->load->helper('security');
@@ -159,17 +203,22 @@ class dashboard extends CI_Controller {
     public function patient_revisit() {
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, CAN_REVISIT);
+        $data['patients'] = $this->model_hms->get_discharged_patients();
+        $data['reg_num'] = $this->model_hms->get_regNo();
+        $data['cities'] = $this->model_hms->get_cities();
+        $data['diseases'] = $this->model_hms->get_disease_names();
+        $data['wards'] = $this->model_hms->get_wards();
         if ($access_checker == 1) {
-            if (!empty($this->input->get("search_discharged_by_cnic"))) {
+            if (!empty($this->input->post("patient_id"))) {
                 $data['reg_num'] = $this->model_hms->get_regNo();
-                $data['patient_list'] = $this->model_hms->search_discharged_result_by_cnic($this->input->get("search_discharged_by_cnic"));
-                $data['old_regNo'] = $this->input->get("search_discharged_by_cnic");
-                $this->load->view('revisit', $data);
+                //$data['patient_list'] = $this->model_hms->search_discharged_result_by_cnic($this->input->post("patient_id"));
+                $data['patient_list'] = $this->model_hms->get_discharge_patient_by_id($this->input->post("patient_id"));
+                $data['old_regNo'] = $this->input->post("patient_id");
+                $json['revisit_patient'] = $this->load->view('admission/insert_discharge_patient', $data,true);
             }
-            if (empty($this->input->get())) {
-                $this->load->view('revisit');
-//            $base_url = load_class('Config')->config['base_url'];
-//            header('location:' . $base_url . "dashboard/patient_revisit");
+            $json['result_html']=$this->load->view('admission/revisit',$data,true);
+            if ($this->input->is_ajax_request()) {
+                set_content_type($json);
             }
         } else {
             $this->insufficient_privileges();
@@ -221,7 +270,13 @@ class dashboard extends CI_Controller {
                 //header('location:' . $base_url . "index.php/dashboard/new_admission?success=true");
                 echo "1";
             }
+
+            if ($this->input->is_ajax_request()) {
+                set_content_type($json);
+            }
         }
+
+
     }
 
     public function insert_discharge_db() {
@@ -527,12 +582,15 @@ class dashboard extends CI_Controller {
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, DISCHARGE_PATIENTS);
         if ($access_checker == 1) {
-            if (!empty($this->input->get("search_by_cnic"))) {
-                $data['patient_list'] = $this->model_hms->search_result_by_cnic($this->input->get("search_by_cnic"));
+            $data['patients'] = $this->model_hms->get_all_patients();
+            if (!empty($this->input->post("patient_id"))) {
+                $data['patient_list'] = $this->model_hms->search_result_by_cnic($this->input->post("patient_id"));
                 $data['discharge_status'] = 0;
-                $this->load->view('discharge_patients', $data);
-            } else {
-                $this->load->view('discharge_patients');
+                $data['filter'] = $this->input->post("patient_id");
+            }
+            $json['result_html'] = $this->load->view('admission/discharge_patients',$data,true);
+            if ($this->input->is_ajax_request()) {
+                set_content_type($json);
             }
         } else {
             $this->insufficient_privileges();

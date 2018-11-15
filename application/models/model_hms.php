@@ -3340,4 +3340,28 @@ class model_hms extends CI_Model {
         }
     }
 
+    public function get_discharged_patients(){
+        $this->db->select('*');
+        $this->db->from('dischargetbl');
+        $result = $this->db->get();
+        if($result) {
+            return $result->result_array();
+        } else {
+            return array();
+        }
+    }
+
+    public function get_discharge_patient_by_id($id) {
+        $this->db->select('*');
+        $this->db->from('dischargetbl');
+        $this->db->where('regNo',$id);
+        $this->db->limit(1);
+        $result = $this->db->get();
+        if($result) {
+            return $result->row_array();
+        } else {
+            return array();
+        }
+    }
+
 }

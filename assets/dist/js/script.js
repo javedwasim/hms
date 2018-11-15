@@ -185,3 +185,39 @@ $(document.body).on('change', '.patient-reg-select', function(){
         }
     });
 });
+
+
+$(document.body).on('change', '.patient-discharge-select', function(){
+    var base_url = $('#base').val();
+    var patient_id = $('.patient-discharge-select').val();
+    $.ajax({
+        url: base_url+'dashboard/discharge_patients',
+        type: 'post',
+        data:{patient_id:patient_id},
+        cache: false,
+        success: function(response) {
+            if(response.result_html != ''){
+                $('#patient_list_container').empty();
+                $('#patient_list_container').append(response.result_html);
+            }
+        }
+    });
+});
+
+
+$(document.body).on('change', '.discharge-patient-select', function(){
+    var base_url = $('#base').val();
+    var patient_id = $('.discharge-patient-select').val();
+    $.ajax({
+        url: base_url+'dashboard/patient_revisit',
+        type: 'post',
+        data:{patient_id:patient_id},
+        cache: false,
+        success: function(response) {
+            if(response.revisit_patient != ''){
+                $('#patient_detail_container').empty();
+                $('#patient_detail_container').append(response.revisit_patient);
+            }
+        }
+    });
+});
