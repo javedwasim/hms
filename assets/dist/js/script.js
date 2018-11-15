@@ -169,3 +169,19 @@ $(document.body).on('click', '.edit_patient_btn', function(){
     $('#delete-modal').modal('hide');
 });
 
+$(document.body).on('change', '.patient-reg-select', function(){
+    var base_url = $('#base').val();
+    var patient_id = $('.patient-reg-select').val();
+    $.ajax({
+        url: base_url+'dashboard/patient_chart',
+        type: 'post',
+        data:{patient_id:patient_id},
+        cache: false,
+        success: function(response) {
+            if(response.result_html != ''){
+                $('#patient_list_container').empty();
+                $('#patient_list_container').append(response.result_html);
+            }
+        }
+    });
+});

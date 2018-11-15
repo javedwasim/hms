@@ -75,7 +75,8 @@ class dashboard extends CI_Controller {
             $data['cities'] = $this->model_hms->get_cities();
             $data['diseases'] = $this->model_hms->get_disease_names();
             $data['wards'] = $this->model_hms->get_wards();
-            $data['patient_list'] = $this->model_hms->search_result_by_cnic($patient_id);
+            $data['patient_reg_no'] = $patient_id;
+            $data['patient_list'] = $this->model_hms->get_patient_byid($patient_id);
             $json['result_html'] = $this->load->view('admission/add', $data,true);
             if ($this->input->is_ajax_request()) {
                 set_content_type($json);
@@ -121,16 +122,31 @@ class dashboard extends CI_Controller {
                 $check = $this->patient_pic_upload($regNo);
                 $udata['patient_pic_path'] = $check;
             }
-            $res = $this->model_hms->insert_users_to_db($udata);
-            if ($res) {
-                $this->model_hms->occupy_bed($udata['patward_id'], $udata['patbed_id']);
-                load_class('Config')->config['base_url'];
-                $json['success']=true;
-                $json['message']='Record has been created successfully.';
+            if(isset($udata['patient_reg_no'])&&!empty($udata['patient_reg_no'])){
+                $res = $this->model_hms->update_patient($udata);
+                if ($res) {
+                    $this->model_hms->occupy_bed($udata['patward_id'], $udata['patbed_id']);
+                    load_class('Config')->config['base_url'];
+                    $json['success']=true;
+                    $json['message']='Record updated successfully.';
+                }else{
+                    $json['error']=true;
+                    $json['message']='Seem to be an error.';
+                }
             }else{
-                $json['error']=true;
-                $json['message']='Seem to be an error.';
+                $res = $this->model_hms->insert_users_to_db($udata);
+                if ($res) {
+                    $this->model_hms->occupy_bed($udata['patward_id'], $udata['patbed_id']);
+                    load_class('Config')->config['base_url'];
+                    $json['success']=true;
+                    $json['message']='Record has been created successfully.';
+                }else{
+                    $json['error']=true;
+                    $json['message']='Seem to be an error.';
+                }
             }
+
+
         }
         if ($this->input->is_ajax_request()) {
             $CI =& get_instance();
@@ -528,27 +544,29 @@ class dashboard extends CI_Controller {
         $access_checker = $this->model_hms->access_checker($priv, VIEW_HISTORY_AND_PLAN_CHART);
         if ($access_checker == 1) {
             $hp_input_status = $this->model_hms->access_checker($priv, CAN_UPDATE_HP_CHART);
-
-            if (!empty($this->input->get("search_by_cnic"))) {
+            $filter = $this->input->post();
+            if(isset($filter['patient_id'])){
                 if ($hp_input_status == 1) {
                     $data['input_status'] = 1;
-                    $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($this->input->get("search_by_cnic"));
+                    $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($filter['patient_id']);
                 } else {
                     $data['input_status'] = 0;
-                    $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($this->input->get("search_by_cnic"));
+                    $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($filter['patient_id']);
                 }
                 if (empty($data['patient_list'])) {
-                    $data['patient_list'] = $this->model_hms->search_result_discharge_by_cnic_chart($this->input->get("search_by_cnic"));
+                    $data['patient_list'] = $this->model_hms->search_result_discharge_by_cnic_chart($filter['patient_id']);
                 }
-                $data['patient_chart'] = $this->model_hms->search_patient_chart($this->input->get("search_by_cnic"));
-                $this->load->view('patient_chart', $data);
+                $data['filter'] = $filter['patient_id'];
             }
-            if (empty($this->input->get())) {
-                $this->load->view('patient_chart');
+            $data['patients'] = $this->model_hms->get_all_patients();
+            $json['result_html'] = $this->load->view('admission/patient_chart',$data,true);
+            if ($this->input->is_ajax_request()) {
+                set_content_type($json);
             }
         } else {
             $this->insufficient_privileges();
         }
+
     }
 
     public function insert_brief_history() {

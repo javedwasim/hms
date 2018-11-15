@@ -32,6 +32,23 @@ class model_hms extends CI_Model {
         return $this->db->insert('admissiontbl', $data);
     }
 
+    public function update_patient($data) {
+        $admidate['datetime'] = $data['patAdmDate'] . " " . $data['AdmTime'];
+        $data['patAdmDate'] = date('Y-m-d H:i:s a', strtotime($admidate['datetime']));
+        $data['patChart_id'] = "22";
+        $data['patStatus'] = "Under Treatment";
+        $paitent_id = $data['patient_reg_no'];
+        unset($data['hour']);
+        unset($data['minute']);
+        unset($data['meridian']);
+        unset($data['AdmTime']);
+        unset($data['RegNumber']);
+        unset($data['patientphoto']);
+        unset($data['patient_reg_no']);
+        $this->db->where('regNo', $paitent_id)->update('admissiontbl',$data);
+        return $this->db->affected_rows();
+    }
+
     public function diseas_insertion($disease) {
         $this->db->where('disease_name', $disease);
         $query = $this->db->get('diseasetbl');
@@ -3307,6 +3324,17 @@ class model_hms extends CI_Model {
         $result = $this->db->get();
         if($result) {
             return $result->row_array();
+        } else {
+            return array();
+        }
+    }
+
+    public function get_all_patients(){
+        $this->db->select('*');
+        $this->db->from('admissiontbl');
+        $result = $this->db->get();
+        if($result) {
+            return $result->result_array();
         } else {
             return array();
         }
