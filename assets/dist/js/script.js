@@ -240,3 +240,21 @@ $(document.body).on('click', '.custom-submit-btn', function(){
         }
     });
 });
+
+
+$(document.body).on('click', '.patient_chart', function(){
+    var base_url = $(this).attr('data-href');
+    var patient_id = $(this).attr('data-value');
+    $.ajax({
+        url: base_url,
+        type: 'post',
+        data:{patient_id:patient_id},
+        cache: false,
+        success: function(response) {
+            if(response.result_html != ''){
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+            }
+        }
+    });
+});

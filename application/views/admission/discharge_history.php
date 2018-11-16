@@ -202,14 +202,13 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
 
                                                 <td style="display:flex;">
                                                     <?php if ($discharge_status == 1) { ?>
-                                                        <a target="_blank" data-toggle="modal" class="btn btn-default"
-                                                           href="<?php echo $base_url; ?>dashboard/patient_chart/?search_by_cnic=<?php echo $p_key['regNo']; ?>">
-                                                            <i class="fa fa-eye" aria-hidden="true"></i>
-                                                        </a> &nbsp;
+                                                        <a data-toggle="modal" class="btn btn-default patient_chart" href="javascript:void(0)"
+                                                           data-value = "<?php echo $p_key['regNo']; ?>"
+                                                           data-href="<?php echo $base_url; ?>dashboard/patient_chart">
+                                                           <i class="fa fa-eye" aria-hidden="true"></i></a> &nbsp;
                                                         <a target="_blank" data-toggle="modal" class="btn btn-default"
                                                            href="<?php echo $base_url; ?>dashboard/discharge_sheet_print/?search_by_cnic=<?php echo $p_key['regNo']; ?>">
-                                                            <i class="fa fa-print" aria-hidden="true"></i>
-                                                        </a>
+                                                            <i class="fa fa-print" aria-hidden="true"></i></a>
                                                     <?php } ?>
                                                     <?php if ($discharge_status !== 1) { ?>
                                                         &nbsp;

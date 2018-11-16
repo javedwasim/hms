@@ -224,8 +224,9 @@
                                                                 <li><a target="_blank" data-toggle="modal" class="btn btn-default" style="text-align: left"
                                                                        href="<?php echo base_url('dashboard/page_print/') . "?search_by_cnic=" . $patient['regNo']; ?>">
                                                                        <i class="fa fa-print"  aria-hidden="true"></i>Print</a></li>
-                                                                <li><a target="_blank" data-toggle="modal" class="btn btn-default" style="text-align: left"
-                                                                       href="<?php echo base_url('dashboard/patient_chart/') . "?search_by_cnic=" . $patient['regNo']; ?>">
+                                                                <li><a data-toggle="modal" class="btn btn-default patient_chart" style="text-align: left"
+                                                                       data-value = "<?php echo  $patient['regNo']; ?>"
+                                                                       data-href="<?php echo base_url('dashboard/patient_chart') ?>">
                                                                        <i class="fa fa-eye"  aria-hidden="true"></i> View</a></li>
                                                                 <li><a  class="btn btn-default edit_patient_btn" style="text-align: left" href="javascript:void(0)"
                                                                         data-href="<?php echo base_url('dashboard/edit_patient/').$patient['regNo']; ?>">
@@ -322,6 +323,8 @@
                 }
             });
         }));
+
+
 
     });
 

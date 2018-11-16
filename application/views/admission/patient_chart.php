@@ -292,7 +292,6 @@
                                         <div class="direct-chat-messages">
                                             <!-- Message. Default to the left -->
                                             <div class="direct-chat-msg history-texts">
-
                                                 <!-- /.direct-chat-info -->
                                                 <?php if (!empty($patient_chart)) {
                                                     $i = 1;
@@ -334,10 +333,7 @@
                                                 echo "disabled";
                                             } ?>>
                                             <input type="hidden" name="chartpatregNo" id="chartpatregNo"
-                                                   value="<?php $param = $this->input->get("search_by_cnic");
-                                                   if (isset($param)) {
-                                                       echo $this->input->get("search_by_cnic");
-                                                   } ?>">
+                                                   value="<?php echo isset($patient_id)?$patient_id:''; ?>">
 
                                             <span class="input-group-btn">
                                           <button type="button" class="btn btn-primary btn-flat"
@@ -409,10 +405,7 @@
                                             } ?>> <span
                                                 class="input-group-btn">
                                               <input type="hidden" name="chartpatregNo" id="chartpatregNo"
-                                                     value="<?php $param = $this->input->get("search_by_cnic");
-                                                     if (isset($param)) {
-                                                         echo $this->input->get("search_by_cnic");
-                                                     } ?>">
+                                                     value="<?php echo isset($patient_id)?$patient_id:''; ?>">
 
                                               <button type="button" class="btn btn-primary btn-flat"
                                                       id="inv-submit" <?php if ($input_status != 1) {
@@ -440,7 +433,6 @@
                                         <div class="direct-chat-messages">
                                             <!-- Message. Default to the left -->
                                             <div class="direct-chat-msg treat-texts">
-
                                                 <!-- /.direct-chat-info -->
                                                 <?php if (!empty($patient_chart)) {
                                                     $i = 1;
@@ -483,10 +475,7 @@
                                             } ?>>
                                             <span class="input-group-btn">
                                               <input type="hidden" name="chartpatregNo" id="chartpatregNo"
-                                                     value="<?php $param = $this->input->get("search_by_cnic");
-                                                     if (isset($param)) {
-                                                         echo $this->input->get("search_by_cnic");
-                                                     } ?>">
+                                                     value="<?php echo isset($patient_id)?$patient_id:''; ?>">
 
                                               <button type="button" class="btn btn-primary btn-flat"
                                                       id="treat-submit" <?php if ($input_status != 1) {
@@ -510,5 +499,80 @@
 <script>
     $(document).ready(function () {
         $('.select2').select2();
+
+        $('#hist-submit').click(function () {
+            var patHistory1 = $('#patHistory').val();
+            var chartpatregNo1 = $('#chartpatregNo').val();
+            var historycount = $('.history-texts>.direct-chat-name').last().text();
+            var docName = $('.docName').text().trim();
+            if (historycount == "") {
+                historycount = 0;
+            }
+            var newhistorycount = parseInt(historycount) + 1;
+            var historytime = 'Just Now';
+            console.log('starting ajax');
+            $.ajax({
+                url: base_url + "index.php/dashboard/insert_brief_history",
+                type: "post",
+                data: {patHistory: patHistory1, chartpatregNo: chartpatregNo1, docName: docName},
+                success: function (data) {
+                    $('#patHistory').val("");
+                    $(".history-texts").append('<span class="direct-chat-name pull-left" style="padding: 10px;" >' + newhistorycount + '.</span><div class="direct-chat-text">' + patHistory1 + '</div><div class="direct-chat-info clearfix"><span class="direct-chat-timestamp pull-right">' + historytime + ' By &nbsp;' + docName + ' </span>');
+                    scrollDown();
+
+
+                }
+            });
+        });
+
+        $('#inv-submit').click(function () {
+            var patInvestigation1 = $('#patInverstigation').val();
+            var chartpatregNo1 = $('#chartpatregNo').val();
+            var historycount = $('.inv-texts>.direct-chat-name').last().text();
+            var docName = $('.docName').text().trim();
+            if (historycount == "") {
+                historycount = 0;
+            }
+            var newhistorycount = parseInt(historycount) + 1;
+            var historytime = 'Just Now';
+            console.log('starting ajax');
+            $.ajax({
+                url: base_url + "index.php/dashboard/insert_inv_plan",
+                type: "post",
+                data: {patInvestigation: patInvestigation1, chartpatregNo: chartpatregNo1, docName: docName},
+                success: function (data) {
+                    $('#patInverstigation').val("");
+                    $(".inv-texts").append('<span class="direct-chat-name pull-left" style="padding: 10px;" >' + newhistorycount + '.</span><div class="direct-chat-text">' + patInvestigation1 + '</div><div class="direct-chat-info clearfix"><span class="direct-chat-timestamp pull-right">' + historytime + ' By &nbsp; ' + docName + ' </span>');
+
+                    scrollDown();
+
+                }
+            });
+        });
+
+        $('#treat-submit').click(function () {
+            var patTreat = $('#patTreatPlan').val();
+            var chartpatregNo2 = $('#chartpatregNo').val();
+            var treatcount = $('.treat-texts>.direct-chat-name').last().text();
+            var docName = $('.docName').text().trim();
+            if (treatcount == "") {
+                treatcount = 0;
+            }
+            var newhistorycount = parseInt(treatcount) + 1;
+            var historytime = 'Just Now';
+            console.log('starting ajax');
+            $.ajax({
+                url: base_url + "index.php/dashboard/insert_treatment_plan",
+                type: "post",
+                data: {patTreatPlan: patTreat, chartpatregNo: chartpatregNo2, docName: docName},
+                success: function (data) {
+                    $('#patTreatPlan').val("");
+                    $(".treat-texts").append('<span class="direct-chat-name pull-left" style="padding: 10px;" >' + newhistorycount + '.</span><div class="direct-chat-text">' + patTreat + '</div><div class="direct-chat-info clearfix"><span class="direct-chat-timestamp pull-right">' + historytime + ' By &nbsp;' + docName + ' </span>');
+                    scrollDown();
+
+
+                }
+            });
+        });
     });
 </script>
