@@ -258,3 +258,58 @@ $(document.body).on('click', '.patient_chart', function(){
         }
     });
 });
+
+$(document.body).on('change', '#search_by_cnic', function(){
+    var base_url = $('#base').val();
+    var patient_id = $('#search_by_cnic').val();
+    $.ajax({
+        url: base_url+'dashboard/operation_theatre',
+        type: 'post',
+        data:{patient_id:patient_id},
+        cache: false,
+        success: function(response) {
+            if(response.result_html != ''){
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+            }
+        }
+    });
+});
+
+$(document.body).on('click', '.ot_booking_btn', function(){
+    $.ajax({
+        url: $('#ot_booking_form').attr('data-action'),
+        type: 'post',
+        data: $('#ot_booking_form').serialize(),
+        cache: false,
+        success: function(response) {
+            if (response.success) {
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+                toastr["success"](response.message);
+            } else {
+                toastr["error"](response.message);
+            }
+        }
+    });
+    return false;
+});
+
+$(document.body).on('click', '.ot-submit-btn', function(){
+    var base_url = $('#base').val();
+    var toward = $('#search_by_otward').val();
+    var patient_id = $('#ot_patient_id').val();
+    var ot_date = $('#search-ot-by-date').val();
+    $.ajax({
+        url: base_url+'dashboard/view_operationlist',
+        type: 'post',
+        data:{toward:toward,patient_id:patient_id,ot_date:ot_date},
+        cache: false,
+        success: function(response) {
+            if(response.result_html != ''){
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+            }
+        }
+    });
+});

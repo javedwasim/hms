@@ -779,17 +779,32 @@ class model_hms extends CI_Model {
         }
     }
 
-    public function search_result_by_ot_patid($qs) {
-        if (!empty($qs)) {
-            $whereArray = array(
-                'otPatNo' => $qs,
-                'otIsOperated' => '0'
-            );
-            $query = $this->db->select('*')
-                    ->where($whereArray)
-                    ->order_by('otBookingDate1 asc, otBookingTime1 asc')
-                    ->get('operationtheatretbl');
-            return $query->result_array();
+    public function search_result_by_ot_patid($filter) {
+        if(isset($filter['toward'])&& !empty($filter['toward'])){
+            $toward =  $filter['toward'];
+        }else{
+            $toward = 0;
+        }
+        if(isset($filter['patient_id'])&& !empty($filter['patient_id'])){
+            $patient_id =  $filter['patient_id'];
+        }else{
+            $patient_id = 0;
+        }
+        if(isset($filter['ot_date']) && !empty($filter['ot_date'])){
+            $ot_date =  $filter['ot_date'];
+        }else{
+            $ot_date=0;
+        }
+        $sql = "SELECT * FROM operationtheatretbl 
+                WHERE 1 AND otIsOperated = 0
+                AND ($toward=0   OR otWardNo = $toward)
+                AND ($patient_id=0  OR otPatNo = $patient_id)
+                AND ($ot_date=0  OR otBookingDate = $ot_date)";
+        $result = $query = $this->db->query($sql);
+        if($result) {
+            return $result->result_array();
+        } else {
+            return array();
         }
     }
 
@@ -3379,6 +3394,17 @@ class model_hms extends CI_Model {
         $result = $this->db->get();
         if($result) {
             return $result->row_array();
+        } else {
+            return array();
+        }
+    }
+
+    public function get_ot_ward(){
+        $this->db->select('*');
+        $this->db->from('otwardtbl');
+        $result = $this->db->get();
+        if($result) {
+            return $result->result_array();
         } else {
             return array();
         }

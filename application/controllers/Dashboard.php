@@ -65,6 +65,27 @@ class dashboard extends CI_Controller {
         }
     }
 
+    public function operation_theatre() {
+        $priv = $this->authentication->read('priv');
+        $access_checker = $this->model_hms->access_checker($priv, CAN_BOOK_OT); //1, can_book_ot
+        $data['patients'] = $this->model_hms->get_all_patients();
+        if ($access_checker == 1) {
+            if (!empty($this->input->post("patient_id"))) {
+                $data['filter'] = $this->input->post("patient_id");
+                $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($this->input->post("patient_id"));
+                $json['result_html']=$this->load->view('operation/operation_theatre', $data,true);
+            }
+            else{
+                $json['result_html']=$this->load->view('operation/operation_theatre',$data,true);
+            }
+            if ($this->input->is_ajax_request()) {
+                set_content_type($json);
+            }
+        } else {
+            $this->insufficient_privileges();
+        }
+    }
+
 
     public function edit_patient($patient_id) {
         $priv = $this->authentication->read('priv');
@@ -1786,27 +1807,7 @@ class dashboard extends CI_Controller {
         }
     }
 
-    //Arslan Code Ends Here
-//=======================================================//
-//       Controller Code for OT Module starts here       //
-//                  By Muhammad Binyameen                //
-//                  GitHub: @imBinyameen                 //
-//=======================================================//
-    public function operation_theatre() {
-        $priv = $this->authentication->read('priv');
-        $access_checker = $this->model_hms->access_checker($priv, CAN_BOOK_OT); //1, can_book_ot
-        if ($access_checker == 1) {
-            if (!empty($this->input->get("search_by_cnic"))) {
-                $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($this->input->get("search_by_cnic"));
-                $this->load->view('operation_theatre', $data);
-            }
-            if (empty($this->input->get()) || !empty($this->input->get('success') == "true") || !empty($this->input->get('error') == "true")) {
-                $this->load->view('operation_theatre');
-            }
-        } else {
-            $this->insufficient_privileges();
-        }
-    }
+
 
     public function insert_ot_booking_db() {
         $udata['otPatNo'] = $this->input->post('ot-patno');
@@ -1819,37 +1820,52 @@ class dashboard extends CI_Controller {
         $udata['otPatName'] = $this->input->post('ot-patname');
         $udata['otSurgeon'] = $this->input->post('ot-surgeon-name');
 
-
         $myDateTime = $this->input->post('opDateTime');
         $new_date = strtotime($myDateTime);
         $newDateString = date('Y-m-d', $new_date);
         $udata['otBookingDate1'] = $newDateString;
-
         $myDateTime = $this->input->post('opTime');
         $new_date = strtotime($myDateTime);
         $newDateString = date('H:i:s', $new_date);
         $udata['otBookingTime1'] = $newDateString;
         $check_ot = $this->model_hms->check_patient_ot_by_regno($this->input->post('ot-patno'));
+
+        $data['patients'] = $this->model_hms->get_all_patients();
         if (!empty($check_ot)) {
-            header('location:' . base_url("dashboard/operation_theatre?error=true"));
+            $json['error'] = true;
+            $json['message'] = 'seem to be an error';
         } else {
             $res = $this->model_hms->insert_ot_booking_to_db($udata);
             if ($res) {
+                $json['success'] = true;
+                $json['message'] = 'Record save successfully!.';
                 $base_url = load_class('Config')->config['base_url'];
-                header('location:' . base_url("dashboard/operation_theatre?success=true"));
+                $json['result_html']=$this->load->view('operation/operation_theatre', $data,true);
+                //header('location:' . base_url("dashboard/operation_theatre?success=true"));
+            }else{
+                $json['error'] = true;
+                $json['message'] = 'seem to be an error';
             }
+        }
+
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
         }
     }
 
     public function view_operationlist() {
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, CAN_VIEW_OT_LIST);
+        $data['ot_wards'] = $this->model_hms->get_ot_ward();
+        $data['patients'] = $this->model_hms->get_all_patients();
+        $filter = $this->input->post();
         if ($access_checker == 1) {
-            if (!empty($this->input->get("search_by_cnic"))) {
+            if (isset($filter) && !empty($filter)) {
                 $data['search'] = "search_by_cnic";
-                $data['id'] = $this->input->get("search_by_cnic");
-                $data['operation_list'] = $this->model_hms->search_result_by_ot_patid($this->input->get("search_by_cnic"));
-                $this->load->view('view_operationlist', $data);
+                $data['id'] = $filter['patient_id'];
+                $data['filter']=$filter;
+                $data['operation_list'] = $this->model_hms->search_result_by_ot_patid($filter);
+                $json['result_html']=$this->load->view('operation/view_operationlist',$data,true);
             } elseif (!empty($this->input->get("search_by_otward"))) {
                 $data['search'] = "search_by_otward";
                 $data['id'] = $this->input->get("search_by_otward");
@@ -1871,8 +1887,12 @@ class dashboard extends CI_Controller {
                 $data['operated_list'] = $this->model_hms->search_result_ot_by_date_operated($this->input->post("search_by_date_operated"));
                 $this->load->view('view_operationlist', $data);
             } else {
-                $this->load->view('view_operationlist');
+                $json['result_html']=$this->load->view('operation/view_operationlist',$data,true);
             }
+            if ($this->input->is_ajax_request()) {
+                set_content_type($json);
+            }
+
         } else {
             $this->insufficient_privileges();
         }
@@ -1964,17 +1984,6 @@ class dashboard extends CI_Controller {
             header('location:' . base_url("dashboard/view_operationlist?usuccess=true"));
         }
     }
-
-//=======================================================//
-//        Controller Code for OT Module ends here        //
-//                  By Muhammad Binyameen                //
-//                  GitHub: @imBinyameen                 //
-//=======================================================//
-//=======================================================//
-//     Controller Code for Account Module starts here    //
-//                  By Muhammad Binyameen                //
-//                  GitHub: @imBinyameen                 //
-//=======================================================//
     public function patient_account_details() {
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, VIEW_ACCOUNTS);
@@ -2440,16 +2449,6 @@ class dashboard extends CI_Controller {
         }
     }
 
-//=======================================================//
-//      Controller Code for Account Module ends here     //
-//                  By Muhammad Binyameen                //
-//                  GitHub: @imBinyameen                 //
-//=======================================================//
-//=======================================================//
-//    Controller Code for OT Form Module starts here     //
-//                  By Muhammad Binyameen                //
-//                  GitHub: @imBinyameen                 //
-//=======================================================//
     public function operation_theatre_form() {
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, CAN_VIEW_OT_LIST);
@@ -2819,17 +2818,6 @@ class dashboard extends CI_Controller {
         }
     }
 
-//=======================================================//
-//     Controller Code for OT Form Module ends here      //
-//                  By Muhammad Binyameen                //
-//                  GitHub: @imBinyameen                 //
-//=======================================================//
-//=======================================================//
-//    Controller Code for Pharmacy Module starts here    //
-//                  By Muhammad Binyameen                //
-//                  GitHub: @imBinyameen                 //
-//=======================================================//
-    //============Products============//
     public function view_products() {
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, VIEW_INVENTORY);
@@ -3241,18 +3229,6 @@ class dashboard extends CI_Controller {
             $this->insufficient_privileges();
         }
     }
-
-//=======================================================//
-//    Controller Code for Pharmacy Module ends here      //
-//                  By Muhammad Binyameen                //
-//                  GitHub: @imBinyameen                 //
-//=======================================================//
-//==========================================================//
-//    Controller Code starts here                           //
-//                  By Sohaib Rashid                      //
-//                                                       //
-//=======================================================//
-
     public function save_vital_report() { {
             $vitalregno = $this->input->post("regno");
             $vitalsdatetime = $this->input->post("vitaldate") . " " . $this->input->post("vitaltime");
