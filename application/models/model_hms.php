@@ -799,7 +799,7 @@ class model_hms extends CI_Model {
                 WHERE 1 AND otIsOperated = 0
                 AND ($toward=0   OR otWardNo = $toward)
                 AND ($patient_id=0  OR otPatNo = $patient_id)
-                AND ($ot_date=0  OR otBookingDate = $ot_date)";
+                AND ($ot_date=0  OR otBookingDate = '$ot_date')";
         $result = $query = $this->db->query($sql);
         if($result) {
             return $result->result_array();
@@ -863,18 +863,29 @@ class model_hms extends CI_Model {
         }
     }
 
-    public function search_result_by_otward_operated($qs) {
-        if (!empty($qs)) {
-            $whereArray = array(
-                'otWardNo' => $qs,
-                'otIsOperated' => '1'
-            );
-            $query = $this->db->select('*')
-                    ->where($whereArray)
-                    ->order_by('otBookingDate1 asc, otBookingTime1 asc')
-                    ->get('operationtheatretbl');
-            return $query->result_array();
+    public function search_result_by_otward_operated($filter) {
+        if(isset($filter['search_by_otward_operated'])&& !empty($filter['search_by_otward_operated'])){
+            $toward =  $filter['search_by_otward_operated'];
+        }else{
+            $toward = 0;
         }
+        if(isset($filter['search_by_date_operated']) && !empty($filter['search_by_date_operated'])){
+            $ot_date =  $filter['search_by_date_operated'];
+        }else{
+            $ot_date=0;
+        }
+        $sql = "SELECT * FROM operationtheatretbl 
+                WHERE 1 AND otIsOperated = 1
+                AND ($toward=0   OR otWardNo = $toward)
+                AND ($ot_date=0  OR otBookingDate = '$ot_date')";
+        $result = $query = $this->db->query($sql);
+        if($result) {
+            return $result->result_array();
+        } else {
+            return array();
+        }
+
+
     }
 
     public function search_result_ot_by_date_operated($qs) {

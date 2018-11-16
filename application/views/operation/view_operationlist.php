@@ -277,8 +277,8 @@
                             <div class="box-header with-border">
                                 <h3 class="box-title">Search Filters</h3>
                                 <div class="box-tools pull-right">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                            class="fa fa-minus"></i></button>
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                        <i class="fa fa-minus"></i></button>
                                 </div>
                             </div><!-- /.box-header -->
                             <div class="box-body">
@@ -287,37 +287,36 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Operation Theater</label>
-                                            <form name="search-by-otward" id="search-by-otward-operated"
-                                                  method="get"
-                                                  action="<?php echo base_url('dashboard/view_operationlist/'); ?>">
-                                                <select class="form-control operated-otward-select"
-                                                        name="search_by_otward_operated"
-                                                        style="width: 100%;"
-                                                        tabindex="4">
-                                                </select>
-                                            </form>
+                                            <select class="form-control operated-otward-select"
+                                                    id="search_by_otward_operated"  name="search_by_otward_operated">
+                                                <option value="0">All</option>
+                                                <?php foreach ($ot_wards as $ward): ?>
+                                                    <option value="<?php echo $ward['otwardId']; ?>"
+                                                        <?php echo isset($filter['search_by_otward_operated'])&&($filter['search_by_otward_operated']==$ward['otwardId'])?'selected':''; ?>>
+                                                        <?php echo $ward['otwardName']; ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <form name="search-by-date" id="search-ot-by-date-operated"
-                                                  method="post"
-                                                  action="<?php echo base_url('dashboard/view_operationlist/'); ?>">
-                                                <label>Search By Date</label>
-                                                <div class="input-group date">
-                                                    <div class="input-group-addon">
-                                                        <i class="fa fa-calendar"></i>
-                                                    </div>
-                                                    <input type="text"
-                                                           class="form-control pull-right search-ot-by-date-operated"
-                                                           id="search-ot-by-date-operated"
-                                                           name="search_by_date_operated"
-                                                           autocomplete="off"
-                                                           placeholder="e.g. DD-MM-YYYY">
+                                            <label>Search By Date</label>
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
                                                 </div>
-                                            </form>
+                                                <input type="text" <?php echo isset($filter['search_by_date_operated'])?$filter['search_by_date_operated']:''; ?>
+                                                       class="form-control pull-right search-ot-by-date-operated" id="search-ot-by-date-operated"
+                                                       name="search_by_date_operated" autocomplete="off" placeholder="e.g. DD-MM-YYYY">
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <button type="button" class="btn bg-blue margin submit-btn ot-submit-btn2">
+                                                <i class="fa fa-search" aria-hidden="true"></i>Search Patient</button>
+                                        </div>
+                                    </div><!-- /.col -->
                                 </div>
                             </div>
                         </div>
@@ -732,8 +731,15 @@
 <script>
     $(document).ready(function () {
         $('.select2').select2();
+        $('#search_by_otward_operated').select2();
         $('.search-ot-by-date').datepicker({
-            format: 'yyyy-mm-dd'
+            format: 'dd-mm-yyyy'
+        }).on('changeDate', function(e){
+            $(this).datepicker('hide');
+        });
+
+        $('.search-ot-by-date-operated').datepicker({
+            format: 'dd-mm-yyyy'
         }).on('changeDate', function(e){
             $(this).datepicker('hide');
         });

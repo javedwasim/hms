@@ -1861,9 +1861,16 @@ class dashboard extends CI_Controller {
         $filter = $this->input->post();
         if ($access_checker == 1) {
             if (isset($filter) && !empty($filter)) {
-                $data['search'] = "search_by_cnic";
-                $data['id'] = $filter['patient_id'];
                 $data['filter']=$filter;
+                if(isset($filter['search_by_otward_operated']) || ($filter['search_by_date_operated'])){
+                    $data['search'] = "search_by_otward_operated";
+                    $data['id'] = $filter['search_by_otward_operated'];
+                    $data['operated_list'] = $this->model_hms->search_result_by_otward_operated($filter);
+                }else{
+                    $data['search'] = "search_by_cnic";
+                    $data['id'] = $filter['patient_id'];
+                    $data['operation_list'] = $this->model_hms->search_result_by_ot_patid($filter);
+                }
                 $data['operation_list'] = $this->model_hms->search_result_by_ot_patid($filter);
                 $json['result_html']=$this->load->view('operation/view_operationlist',$data,true);
             } elseif (!empty($this->input->get("search_by_otward"))) {
@@ -1876,10 +1883,10 @@ class dashboard extends CI_Controller {
                 $data['id'] = $this->input->get("search_by_date");
                 $data['operation_list'] = $this->model_hms->search_result_ot_by_date($this->input->post("search_by_date"));
                 $this->load->view('view_operationlist', $data);
-            } elseif (!empty($this->input->get("search_by_otward_operated"))) {
+            } elseif (!empty($this->input->post("search_by_otward_operated"))) {
                 $data['search'] = "search_by_otward_operated";
                 $data['id'] = $this->input->get("search_by_otward_operated");
-                $data['operated_list'] = $this->model_hms->search_result_by_otward_operated($this->input->get("search_by_otward_operated"));
+                $data['operated_list'] = $this->model_hms->search_result_by_otward_operated($this->input->post("search_by_otward_operated"));
                 $this->load->view('view_operationlist', $data);
             } elseif (!empty($this->input->post("search_by_date_operated"))) {
                 $data['search'] = "search_by_date_operated";

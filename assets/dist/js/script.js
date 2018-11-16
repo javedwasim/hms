@@ -313,3 +313,21 @@ $(document.body).on('click', '.ot-submit-btn', function(){
         }
     });
 });
+
+$(document.body).on('click', '.ot-submit-btn2', function(){
+    var base_url = $('#base').val();
+    var toward = $('#search_by_otward_operated').val();
+    var ot_date = $('#search-ot-by-date-operated').val();
+    $.ajax({
+        url: base_url+'dashboard/view_operationlist',
+        type: 'post',
+        data:{search_by_otward_operated:toward,search_by_date_operated:ot_date},
+        cache: false,
+        success: function(response) {
+            if(response.result_html != ''){
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+            }
+        }
+    });
+});
