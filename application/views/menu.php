@@ -66,6 +66,12 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
     $(document).ready(function(){
         $(".ahref").click(function(){
             setMenuId(this.id);
+            var menuID = this.id;
+            $("#"+menuID).parent().parent().parent().children().find(".fa-plus-circle").removeClass('fa-plus-circle').addClass('fa-minus-circle');
+            $("#"+menuID).parent().parent().css("display","block");
+            var liClass = $("#"+menuID).parent().attr("class");
+            $('.'+liClass).removeClass('active_menu');
+            $("#"+menuID).parent().addClass('active_menu');
         });
         var menuID = ('<?php echo $this->session->userdata('menu_id');?>');
         $("#"+menuID).parent().parent().parent().children().find(".fa-plus-circle").removeClass('fa-plus-circle').addClass('fa-minus-circle');

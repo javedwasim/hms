@@ -291,5 +291,207 @@
 <script>
     $(document).ready(function () {
         $('.select2').select2();
+        $('#chkshift').on('ifChecked', function () {
+            $('.shift-menu').removeAttr("style").attr("style", "display:block");
+
+        });
+        $('#chkshift').on('ifUnchecked', function () {
+            $('.shift-menu').removeAttr("style").attr("style", "display:none");
+        });
+
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_flat',
+            radioClass: 'iradio_flat',
+            increaseArea: '20%' // optional
+        });
+
+        $('#discharge-submit').click(function () {
+
+            var regNo = $('#regNo').val();
+            var emergencyno = $('#emergency_no').val();
+            var admino = $('#admi_no').val();
+            var patName = $('#patName').val();
+            var patNoKType = $('#patNoKType').val();
+            var patNoK = $('#patNoK').val();
+            var patDoB = $('#patDoB').val();
+            var patAge = $('#patAge').val();
+            var patMonthAge = $('#patMonthAge').val();
+            var patDaysAge = $('#patDaysAge').val();
+            var patBldGrp = $('#patBldGrp').val();
+            var patDisease_id = $('#patDisease_id').val();
+            var patSex = $('#patSex').val();
+            var patCNIC = $('#patCNIC').val();
+            var patAddress = $('#patAddress').val();
+            var patOccupation = $('#patOccupation').val();
+            var patPhone = $('#patPhone').val();
+            var patEntitled = $('#patEntitled').val();
+            var garName = $('#garName').val();
+            var garCnic = $('#garCnic').val();
+            var garContact = $('#garContact').val();
+            var garRelation = $('#garRelation').val();
+            var patunit_Id = $('#patunit_Id').val();
+            var patShiftedFrom = $('#patShiftedFrom').val();
+            var patward_id = $('#patward_id').val();
+            var patbed_id = $('#patbed_id').val();
+            var patAdmDate = $('#patAdmDate').val();
+            var patChart_id = $('#patChart_id').val();
+            var patStatus = $('.discharge-custom-radio:checked').val();
+            var dischargeadvice = $('#discharge-advice').val();
+            var shiftedFrom = $('.shifted-from').val();
+            var shiftedTo = $('#shifted-to').val();
+            var shiftedBy = $('#shift-by').val();
+            var outcome = $('.discharge-custom-radio:checked').val();
+            var patID = $('#regNo').val();
+            var check = $('#chkshift').prop("checked");
+            var FreeCarePatient = $('#FreeCarePatient').val();
+            var patient_pic_path = $('#patient_pic_path').val();
+            var discharge_date = $('#dischargeDate').val();
+            console.log('starting ajax' + check);
+            setTimeout(function () {
+                var win = window.open(base_url + 'dashboard/discharge_sheet_print/?search_by_cnic=' + patID, '_blank');
+                if (win) {
+                    console.log("new tab opened");
+                    win.focus();
+                } else {
+                    //Browser has blocked it
+                    alert('Please allow popups for this website');
+                }
+            }, 1000);
+
+            if (check == true) {
+                if (shiftedFrom !== '' && shiftedTo !== '' && shiftedBy !== '' && outcome !== '' && patID !== '') {
+                    $.ajax({
+                        url: base_url + "index.php/dashboard/insert_discharge_db/",
+                        type: "post",
+                        data: {
+                            regNo: regNo,
+                            emergencyno: emergencyno,
+                            admino: admino,
+                            patName: patName,
+                            patNoKType: patNoKType,
+                            patNoK: patNoK,
+                            patDoB: patDoB,
+                            patAge: patAge,
+                            patMonthAge: patMonthAge,
+                            patDaysAge: patDaysAge,
+                            patBldGrp: patBldGrp,
+                            patDisease_id: patDisease_id,
+                            patSex: patSex,
+                            patCNIC: patCNIC,
+                            patAddress: patAddress,
+                            patOccupation: patOccupation,
+                            patPhone: patPhone,
+                            patEntitled: patEntitled,
+                            garName: garName,
+                            garCnic: garCnic,
+                            garContact:garContact,
+                            garRelation: garRelation,
+                            patunit_Id: patunit_Id,
+                            patShiftedFrom: patShiftedFrom,
+                            patward_id: patward_id,
+                            patbed_id: patbed_id,
+                            patAdmDate: patAdmDate,
+                            patChart_id: patChart_id,
+                            patStatus: patStatus,
+                            shiftFrom: shiftedFrom,
+                            shiftTo: shiftedTo,
+                            shiftPatId: patID,
+                            patOutcome: outcome,
+                            shiftBy: shiftedBy,
+                            discharge_advice: dischargeadvice,
+                            FreeCarePatient: FreeCarePatient,
+                            patientPicPath: patient_pic_path,
+                            dischargeDate: discharge_date
+                        },
+                        success: function (data) {
+                            $('#discharge-modal').modal('hide');
+                            $('#status').text("Discharged");
+                            $('.wrapper').append('<div style="position: fixed;\n' +
+                                'top: 20px;\n' +
+                                'right: 20px;\n' +
+                                'z-index: 1030;" class="alert alert-success alert-dismissible">\n' +
+                                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>\n' +
+                                '<h4><i class="icon fa fa-check"></i> Success!</h4>\n' +
+                                'Patient has been Discharged Successfully.\n' +
+                                '</div>');
+                            $('.alert-success').delay(4000).fadeOut('slow');
+
+
+                        }
+                    });
+
+                }
+                else {
+                    alert("Please fill in the Shift Information to proceed!");
+                }
+            }
+            else {
+                if ($('.discharge-custom-radio:checked').prop("checked") === true && dischargeadvice !== "") {
+                    $.ajax({
+                        url: base_url + "index.php/dashboard/insert_discharge_db/",
+                        type: "post",
+                        data: {
+                            regNo: regNo,
+                            emergencyno: emergencyno,
+                            admino: admino,
+                            patName: patName,
+                            patNoKType: patNoKType,
+                            patNoK: patNoK,
+                            patDoB: patDoB,
+                            patAge: patAge,
+                            patMonthAge: patMonthAge,
+                            patDaysAge: patDaysAge,
+                            patBldGrp: patBldGrp,
+                            patDisease_id: patDisease_id,
+                            patSex: patSex,
+                            patCNIC: patCNIC,
+                            patAddress: patAddress,
+                            patOccupation: patOccupation,
+                            patPhone: patPhone,
+                            patEntitled: patEntitled,
+                            garName: garName,
+                            garCnic: garCnic,
+                            garContact:garContact,
+                            garRelation: garRelation,
+                            patunit_Id: patunit_Id,
+                            patShiftedFrom: patShiftedFrom,
+                            patward_id: patward_id,
+                            patbed_id: patbed_id,
+                            patAdmDate: patAdmDate,
+                            patChart_id: patChart_id,
+                            patStatus: patStatus,
+                            discharge_advice: dischargeadvice,
+                            FreeCarePatient: FreeCarePatient,
+                            patientPicPath: patient_pic_path,
+                            dischargeDate: discharge_date
+                        },
+                        success: function (data) {
+                            $('#discharge-modal').modal('hide');
+                            $('#status').text("Discharged");
+                            $('.wrapper').append('<div style="position: fixed;\n' +
+                                'top: 20px;\n' +
+                                'right: 20px;\n' +
+                                'z-index: 1030;" class="alert alert-success alert-dismissible">\n' +
+                                '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>\n' +
+                                '<h4><i class="icon fa fa-check"></i> Success!</h4>\n' +
+                                'Patient has been Discharged Successfully.\n' +
+                                '</div>');
+                            $('.alert-success').delay(4000).fadeOut('slow');
+
+                        }
+                    });
+                }
+                else {
+                    alert("Please select an option from the Outcome options and fill the discharge advice!")
+                }
+            }
+        });
+
+        $('#dischargeDate').datepicker({
+            format: 'yyyy-mm-dd'
+        }).on('changeDate', function(e){
+            $(this).datepicker('hide');
+        });
+
     });
 </script>

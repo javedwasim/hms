@@ -624,9 +624,16 @@ class dashboard extends CI_Controller {
         if ($access_checker == 1) {
             $hp_input_status = $this->model_hms->access_checker($priv, CAN_UPDATE_HP_CHART);
             $filter = $this->input->post();
-            $data['patient_id'] = $filter['patient_id'];
+            if(isset($filter['patient_id'])){
+                $data['patient_id'] = $filter['patient_id'];
+                $data['patient_chart'] = $this->model_hms->search_patient_chart($filter['patient_id']);
+            }else{
+                $data['patient_id'] = '';
+                $data['patient_chart'] = array();
+
+            }
             $data['patients'] = $this->model_hms->get_all_patients();
-            $data['patient_chart'] = $this->model_hms->search_patient_chart($filter['patient_id']);
+
             if(isset($filter['patient_id'])){
                 if ($hp_input_status == 1) {
                     $data['input_status'] = 1;
