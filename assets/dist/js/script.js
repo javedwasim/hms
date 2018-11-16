@@ -221,3 +221,22 @@ $(document.body).on('change', '.discharge-patient-select', function(){
         }
     });
 });
+
+$(document.body).on('click', '.custom-submit-btn', function(){
+    var base_url = $('#base').val();
+    var patient_id = $('.discharge-history-select').val();
+    var from_date = $('.search-discharged-by-from-date').val();
+    var to_date = $('.search-discharged-by-to-date').val();
+    $.ajax({
+        url: base_url+'dashboard/view_discharge_history',
+        type: 'post',
+        data:{patient_id:patient_id,from_date:from_date,to_date:to_date},
+        cache: false,
+        success: function(response) {
+            if(response.result_html != ''){
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+            }
+        }
+    });
+});

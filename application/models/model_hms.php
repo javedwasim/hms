@@ -247,12 +247,32 @@ class model_hms extends CI_Model {
         echo "]";
     }
 
-    public function search_result_discharged_by_cnic($qs) {
-        if (!empty($qs)) {
-            $query = $this->db->select('*')
-                    ->where('regNo', $qs)
-                    ->get('dischargetbl');
-            return $query->result_array();
+    public function search_result_discharged_by_cnic($filter) {
+        if(isset($filter['patient_id']) && !empty($filter['patient_id'])){
+            $patient_id =  $filter['patient_id'];
+        }else{
+            $patient_id = 0;
+        }
+        if(isset($filter['from_date']) && !empty($filter['from_date'])){
+            $form_date =  date('d-m-Y', strtotime($filter['from_date']));
+        }else{
+            $form_date = 0;
+        }
+        if(isset($filter['to_date']) && !empty($filter['to_date'])){
+            $to_date =  date('d-m-Y', strtotime($filter['to_date']));
+        }else{
+            $to_date=0;
+        }
+        $sql = "SELECT * FROM dischargetbl 
+                WHERE 1
+                AND ($patient_id=0   OR regNo = $patient_id)
+                AND ($form_date=0  OR patAdmDate BETWEEN '$form_date' AND '$to_date')
+               ";
+        $result = $query = $this->db->query($sql);
+        if($result) {
+            return $result->result_array();
+        } else {
+            return array();
         }
     }
 

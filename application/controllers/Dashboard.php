@@ -93,17 +93,10 @@ class dashboard extends CI_Controller {
         $access_checker = $this->model_hms->access_checker($priv, DISCHARGE_PATIENTS);
         if ($access_checker == 1) {
             $data['patients'] = $this->model_hms->get_discharged_patients();
-            if (!empty($this->input->get("search_discharged_by_cnic"))) {
-                $data['patient_list'] = $this->model_hms->search_result_discharged_by_cnic($this->input->get("search_discharged_by_cnic"));
+            $data['filter'] = $this->input->post();
+            if (!empty($data['filter'])) {
+                $data['patient_list'] = $this->model_hms->search_result_discharged_by_cnic($this->input->post());
                 $data['discharge_status'] = 1;
-                $json['result_html'] = $this->load->view('admission/discharge_history', $data,true);
-            } elseif (!empty($this->input->get("search_discharged_by_to_date")) && !empty($this->input->get("search_discharged_by_from_date"))) {
-                $todate = $this->input->get("search_discharged_by_to_date");
-                $fromdate = $this->input->get("search_discharged_by_from_date");
-                $todate = date('Y-m-d', strtotime($todate));
-                $fromdate = date('Y-m-d', strtotime($fromdate));
-                $data['discharge_status'] = 1;
-                $data['patient_list'] = $this->model_hms->search_result_discharged_by_date($fromdate, $todate);
                 $json['result_html'] = $this->load->view('admission/discharge_history', $data,true);
             } else {
                 $json['result_html'] = $this->load->view('admission/discharge_history',$data,true);
