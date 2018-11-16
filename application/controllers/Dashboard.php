@@ -88,6 +88,34 @@ class dashboard extends CI_Controller {
 
     }
 
+    public function view_discharge_history() {
+        $priv = $this->authentication->read('priv');
+        $access_checker = $this->model_hms->access_checker($priv, DISCHARGE_PATIENTS);
+        if ($access_checker == 1) {
+            $data['patients'] = $this->model_hms->get_discharged_patients();
+            if (!empty($this->input->get("search_discharged_by_cnic"))) {
+                $data['patient_list'] = $this->model_hms->search_result_discharged_by_cnic($this->input->get("search_discharged_by_cnic"));
+                $data['discharge_status'] = 1;
+                $json['result_html'] = $this->load->view('admission/discharge_history', $data,true);
+            } elseif (!empty($this->input->get("search_discharged_by_to_date")) && !empty($this->input->get("search_discharged_by_from_date"))) {
+                $todate = $this->input->get("search_discharged_by_to_date");
+                $fromdate = $this->input->get("search_discharged_by_from_date");
+                $todate = date('Y-m-d', strtotime($todate));
+                $fromdate = date('Y-m-d', strtotime($fromdate));
+                $data['discharge_status'] = 1;
+                $data['patient_list'] = $this->model_hms->search_result_discharged_by_date($fromdate, $todate);
+                $json['result_html'] = $this->load->view('admission/discharge_history', $data,true);
+            } else {
+                $json['result_html'] = $this->load->view('admission/discharge_history',$data,true);
+            }
+        } else {
+            $this->insufficient_privileges();
+        }
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
+        }
+    }
+
     public function shift_patient() {
         if (!empty($this->input->get("search_by_cnic"))) {
             $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($this->input->get("search_by_cnic"));
@@ -3300,29 +3328,7 @@ class dashboard extends CI_Controller {
         }
     }
 
-    public function view_discharge_history() {
-        $priv = $this->authentication->read('priv');
-        $access_checker = $this->model_hms->access_checker($priv, DISCHARGE_PATIENTS);
-        if ($access_checker == 1) {
-            if (!empty($this->input->get("search_discharged_by_cnic"))) {
-                $data['patient_list'] = $this->model_hms->search_result_discharged_by_cnic($this->input->get("search_discharged_by_cnic"));
-                $data['discharge_status'] = 1;
-                $this->load->view('discharge_history', $data);
-            } elseif (!empty($this->input->get("search_discharged_by_to_date")) && !empty($this->input->get("search_discharged_by_from_date"))) {
-                $todate = $this->input->get("search_discharged_by_to_date");
-                $fromdate = $this->input->get("search_discharged_by_from_date");
-                $todate = date('Y-m-d', strtotime($todate));
-                $fromdate = date('Y-m-d', strtotime($fromdate));
-                $data['discharge_status'] = 1;
-                $data['patient_list'] = $this->model_hms->search_result_discharged_by_date($fromdate, $todate);
-                $this->load->view('discharge_history', $data);
-            } else {
-                $this->load->view('discharge_history');
-            }
-        } else {
-            $this->insufficient_privileges();
-        }
-    }
+
 
     public function vital_print() {
         $this->load->library('ciqrcode');

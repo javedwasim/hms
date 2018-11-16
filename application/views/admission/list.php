@@ -236,10 +236,6 @@
                                                                         <a data-toggle="modal" class="btn btn-default delete-patient" style="text-align: left" href="javascript:void(0)"
                                                                            data-href="<?php echo $patient['regNo']; ?>"><i
                                                                            class="fa fa-trash" aria-hidden="true"></i>Delete</a>
-                                                                    <?php } else { ?>
-                                                                        <a target="_blank" data-toggle="modal" class="btn btn-default" style="text-align: left"
-                                                                           href="<?php echo base_url('dashboard/page_print/') . "?search_by_cnic=" . $patient['regNo']; ?>"><i
-                                                                           class="fa fa-print" aria-hidden="true"></i>Print</a>
                                                                     <?php } ?>
                                                                 </li>
 
