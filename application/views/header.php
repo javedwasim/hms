@@ -63,3 +63,7 @@ if ($this->authentication->is_loggedin())
         var site_url = '<?php echo site_url(); ?>/';
         var base_url = '<?php echo base_url(); ?>';
 </script>
+
+<div id="spinner" class="spinner" style="display:none;">
+    <img id="img-spinner" src="<?php echo base_url(); ?>assets/uploads/images/spinner.gif" alt="Loading"/>
+</div>

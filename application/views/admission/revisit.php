@@ -55,6 +55,7 @@
                             <form name="search-discharged-patients" id="search-discharged-patients" method="get"
                                   action="#patient-info">
                                 <select class="discharge-patient-select form-control select2" name="search_discharged_by_cnic" >
+                                    <option value="">Please select</option>
                                     <?php foreach ($patients as $patient): ?>
                                         <option value="<?php echo $patient['regNo']; ?>"<?php echo isset($filter)&&($filter == $patient['regNo'])?'selected':''; ?>>
                                             <?php echo $patient['patName'].' '.$patient['patNoKType'].' '.$patient['patNoK']; ?></option>

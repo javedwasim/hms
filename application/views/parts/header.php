@@ -13,3 +13,7 @@ if ($this->input->get("success") == "true") {
     <?php $this->load->view('header'); ?>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
+
+<div id="spinner" class="spinner" style="display:none;">
+    <img id="img-spinner" src="<?php echo base_url(); ?>assets/uploads/images/spinner.gif" alt="Loading"/>
+</div>

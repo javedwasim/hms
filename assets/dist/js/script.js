@@ -331,3 +331,21 @@ $(document.body).on('click', '.ot-submit-btn2', function(){
         }
     });
 });
+
+$(document.body).on('click', '#patient_report_btn', function(){
+    var base_url = $('#base').val();
+    var patient_id = $('#patient_report_select').val();
+    $.ajax({
+        url: base_url+'dashboard/patient_reports',
+        type: 'post',
+        data:{patient_id:patient_id},
+        cache: false,
+        success: function(response) {
+            if(response.result_html != ''){
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+                $('#title').html('SMS | Radiology');
+            }
+        }
+    });
+});

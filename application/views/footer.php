@@ -59,3 +59,16 @@
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/plugins/toster/build/toastr.min.js"></script>
 
 <script src="<?php echo base_url('/assets/dist/js/script.js'); ?>"></script>
+<script>
+    var $loading = $('#spinner').hide();
+    //Attach the event handler to any element
+    $(document)
+        .ajaxStart(function () {
+            //ajax request went so show the loading image
+            $loading.show();
+        })
+        .ajaxStop(function () {
+            //got response so hide the loading image
+            $loading.hide();
+        });
+</script>

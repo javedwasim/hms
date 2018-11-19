@@ -5,11 +5,12 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
 ?>
 <?php foreach ($menus as $menu) { ?>
     <li <?php if (isset($menu->children)) { ?> class="treeview" <?php } ?>>
-        <a href="<?php if (!empty($menu->parent_menu_link)) {
-            echo $base_url . $menu->parent_menu_link;
+        <a class="ahref" data-href="<?php if (!empty($menu->parent_menu_link)) {
+            echo  $menu->parent_menu_link;
         } else {
             echo "#";
-        } ?>" <?php if (!empty($menu->menu_collapser_id)) {
+        } ?>" href="javascript:void(0)" id="<?php echo $menu->menu_name;  ?>"
+            <?php if (!empty($menu->menu_collapser_id)) {
             echo 'id="' . $menu->menu_collapser_id . '"';
         } ?>>
             <i class="<?php echo $menu->menu_icon; ?>"></i>
@@ -62,22 +63,20 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
         get_patient_accounts(func_call);
     });
 </script>
+
 <script>
     $(document).ready(function(){
         $(".ahref").click(function(){
             setMenuId(this.id);
+            $(".ahref").removeClass("active_menu");
             var menuID = this.id;
-            $("#"+menuID).parent().parent().parent().children().find(".fa-plus-circle").removeClass('fa-plus-circle').addClass('fa-minus-circle');
-            $("#"+menuID).parent().parent().css("display","block");
-            var liClass = $("#"+menuID).parent().attr("class");
-            $('.'+liClass).removeClass('active_menu');
-            $("#"+menuID).parent().addClass('active_menu');
+            $('#'+menuID).addClass('active_menu')
         });
-        var menuID = ('<?php echo $this->session->userdata('menu_id');?>');
-        $("#"+menuID).parent().parent().parent().children().find(".fa-plus-circle").removeClass('fa-plus-circle').addClass('fa-minus-circle');
-        $("#"+menuID).parent().parent().css("display","block");
-         var liClass = $("#"+menuID).parent().attr("class");
-         $('.'+liClass).removeClass('active_menu');
-        $("#"+menuID).parent().addClass('active_menu');
+//        var menuID = ('<?php //echo $this->session->userdata('menu_id');?>//');
+//        $("#"+menuID).parent().parent().parent().children().find(".fa-plus-circle").removeClass('fa-plus-circle').addClass('fa-minus-circle');
+//        $("#"+menuID).parent().parent().css("display","block");
+//         var liClass = $("#"+menuID).parent().attr("class");
+//         $('.'+liClass).removeClass('active_menu');
+//        $("#"+menuID).parent().addClass('active_menu');
     });
 </script>

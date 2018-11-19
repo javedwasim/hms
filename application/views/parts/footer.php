@@ -9,6 +9,7 @@
     reserved.
 </footer>
 <div class="control-sidebar-bg"></div>
+
 <!-- jQuery 3 -->
 <script src="<?php echo base_url('/assets/bower_components/jquery/dist/jquery.min.js'); ?>"></script>
 <!-- jQuery UI 1.11.4 -->
@@ -70,5 +71,20 @@
 <script type="text/javascript" src="<?php echo base_url(); ?>assets/plugins/toster/build/toastr.min.js"></script>
 
 <script src="<?php echo base_url('/assets/dist/js/script.js'); ?>"></script>
+
+<script>
+    var $loading = $('#spinner').hide();
+    //Attach the event handler to any element
+    $(document)
+        .ajaxStart(function () {
+            //ajax request went so show the loading image
+            $loading.show();
+        })
+        .ajaxStop(function () {
+            //got response so hide the loading image
+            $loading.hide();
+        });
+</script>
+
 </body>
 </html>

@@ -8,6 +8,8 @@
     border-bottom: 1px solid #222;
     background-color: #007bff;
 }
+
+
 .custom-radio{
 display: inline-block;
 }
@@ -214,4 +216,21 @@ font-size:12px !important;
 
 #vitals-search th {
     font-size: 12px;
+}
+
+.spinner {
+    position: absolute;
+    text-align:center;
+    z-index:1234;
+    background-color: #ffffff;
+    border: 1px solid black;
+    opacity: 0.6;
+    filter: alpha(opacity=60);
+    /*overflow: auto;*/
+    width: 100%; /* width of the spinner gif */
+    height: 100%; /*hight of the spinner gif +2px to fix IE8 issue */
+}
+
+.active_menu:hover{
+    background-color: #007bff;
 }

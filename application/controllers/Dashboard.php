@@ -28,7 +28,17 @@ class dashboard extends CI_Controller {
     }
 
     public function index() {
-        $this->load->view('dashboard');
+        $json['result_html'] = $this->load->view('dashboard');
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
+        }
+    }
+
+    public function dashboard() {
+        $json['result_html'] = $this->load->view('dashboard/dashboard',[],true);
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
+        }
     }
 
     public function view_patients() {
@@ -240,6 +250,47 @@ class dashboard extends CI_Controller {
             ->set_output(json_encode($json));
         }
 
+    }
+
+    public function patient_reports() {
+        $priv = $this->authentication->read('priv');
+        $access_checker = $this->model_hms->access_checker($priv, VIEW_RADIOLOGY_SECTION); //1, can_book_ot
+        $data['patients'] = $this->model_hms->get_all_patients();
+        $data['filter'] = $this->input->post();
+        if ($access_checker == 1) {
+            if (!empty($this->input->post("patient_id"))) {
+                $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($this->input->post("patient_id"));
+                $data['report_list'] = $this->model_hms->report_view($this->input->post("patient_id"));
+                if (!empty($this->input->post("reportName"))) {
+                    $report['reportName'] = $this->input->post("reportName");
+                    $reporttype = preg_replace('/[^A-Za-z0-9\-]/','',$this->input->post("reportType"));
+                    $report['reportType'] = $reporttype;
+                    $reportcomment = preg_replace('/[^A-Za-z0-9\-]/','',$this->input->post("reportComments"));
+                    $report['reportComments'] = $reportcomment;
+                    $path = $this->input->post("reportUploaded");
+                    $report['patregNo'] = $this->input->post("patient_id");
+
+                    $newReportName = $report['patregNo'] . "-" . $report['reportType'] . "-" . date("Y-m-d-h-i-sa");
+                    $reportPath = $this->do_report_upload($newReportName);
+                    //$filteredExtension = preg_replace('/\d/', '', $reportPath);
+                    $report['reportPath'] = $reportPath;
+                    // $report['reportPath'] = $reportPath['file_name'];
+                    $query = $this->model_hms->report_insert($report);
+                    if ($query) {
+                        //redirect(base_url('dashboard/patient_reports/?search_by_cnic=' . $report['patregNo']));
+                        $json['result_html']=$this->load->view('radiology/report_list', $data,true);
+
+                    }
+                }
+                $json['result_html']=$this->load->view('radiology/list', $data,true);
+            }
+            $json['result_html']=$this->load->view('radiology/list',$data,true);
+            if ($this->input->is_ajax_request()) {
+                set_content_type($json);
+            }
+        } else {
+            $this->insufficient_privileges();
+        }
     }
 
     public function patient_revisit() {
@@ -1599,44 +1650,7 @@ class dashboard extends CI_Controller {
     //=======================================================//
 
 
-    public function patient_reports() {
-        $priv = $this->authentication->read('priv');
-        $access_checker = $this->model_hms->access_checker($priv, VIEW_RADIOLOGY_SECTION); //1, can_book_ot
-        if ($access_checker == 1) {
-            if (!empty($this->input->get("search_by_cnic"))) {
-                $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($this->input->get("search_by_cnic"));
-                $data['report_list'] = $this->model_hms->report_view($this->input->get("search_by_cnic"));
-                if (!empty($this->input->post("btn-report-submit"))) {
-                    $report['reportName'] = $this->input->post("reportName");
-                    $reporttype = preg_replace('/[^A-Za-z0-9\-]/','',$this->input->post("reportType"));
-                    $report['reportType'] = $reporttype;
-                    $reportcomment = preg_replace('/[^A-Za-z0-9\-]/','',$this->input->post("reportComments"));
-                    $report['reportComments'] = $reportcomment;
-                    $path = $this->input->post("reportUploaded");
-                    $report['patregNo'] = $this->input->get("search_by_cnic");
 
-                    $newReportName = $report['patregNo'] . "-" . $report['reportType'] . "-" . date("Y-m-d-h-i-sa");
-                    $reportPath = $this->do_report_upload($newReportName);
-
-                    $filteredExtension = preg_replace('/\d/', '', $reportPath['file_ext']);
-                    $report['reportPath'] = $reportPath . $filteredExtension;
-                    // $report['reportPath'] = $reportPath['file_name'];
-
-                    $query = $this->model_hms->report_insert($report);
-                    if ($query) {
-                        redirect(base_url('dashboard/patient_reports/?search_by_cnic=' . $report['patregNo']));
-                        // unset($_POST);
-                    }
-                }
-                $this->load->view('patient_reports', $data);
-            }
-            if (empty($this->input->get()) || !empty($this->input->get('success') == "true")) {
-                $this->load->view('patient_reports');
-            }
-        } else {
-            $this->insufficient_privileges();
-        }
-    }
 
     //=======================================================//
     // Controller Code for patient vitals sheet starts here  //
