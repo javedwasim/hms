@@ -50,12 +50,12 @@
                       enctype="multipart/form-data" id="search_patient_form">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label>MR# or Patient Name</label>
+                            <label>MR# or Patient Namess</label>
                             <select class="patName-select form-control select2" name="search_by_name">
                                 <option value="0">All</option>
                                 <?php foreach ($patients as $patient): ?>
                                     <option value="<?php echo $patient['regNo']; ?>"<?php echo isset($filter['search_by_name'])&&($filter['search_by_name'] == $patient['regNo'])?'selected':''; ?>>
-                                       <span style="color;: #ffff"><?php echo $patient['regNo']; ?></span> <?php echo $patient['patName'].' '.$patient['patNoKType'].' '.$patient['patNoK']; ?></option>
+                                       <div style="color;: #ffff"><?php echo $patient['regNo']; ?></div> <?php echo $patient['patName'].' '.$patient['patNoKType'].' '.$patient['patNoK']; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

@@ -349,3 +349,18 @@ $(document.body).on('click', '#patient_report_btn', function(){
         }
     });
 });
+
+
+$(document.body).on('click', '.ahref', function(){
+    var base_url = $('#base').val();
+    $.ajax({
+        url: base_url + $(this).attr('data-href'),
+        cache: false,
+        success: function (response) {
+            if (response.result_html != '') {
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+            }
+        }
+    });
+});

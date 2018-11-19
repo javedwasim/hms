@@ -1878,19 +1878,23 @@ class dashboard extends CI_Controller {
         $access_checker = $this->model_hms->access_checker($priv, CAN_VIEW_OT_LIST);
         $data['ot_wards'] = $this->model_hms->get_ot_ward();
         $data['patients'] = $this->model_hms->get_all_patients();
+        $data['tab_no']=0;
         $filter = $this->input->post();
         if ($access_checker == 1) {
             if (isset($filter) && !empty($filter)) {
                 $data['filter']=$filter;
-                if(isset($filter['search_by_otward_operated']) || ($filter['search_by_date_operated'])){
+                if(isset($filter['toward']) || isset($filter['ot_date'])){
+                    $data['tab_no']=1;
                     $data['search'] = "search_by_otward_operated";
-                    $data['id'] = $filter['search_by_otward_operated'];
-                    $data['operated_list'] = $this->model_hms->search_result_by_otward_operated($filter);
+                    $data['id'] = $filter['ot_date'];
+                    $data['operation_list'] = $this->model_hms->search_result_by_ot_patid($filter);
+
                 }else{
                     $data['search'] = "search_by_cnic";
-                    $data['id'] = $filter['patient_id'];
-                    $data['operation_list'] = $this->model_hms->search_result_by_ot_patid($filter);
+                    //$data['id'] = $filter['patient_id'];
+                    $data['operated_list'] = $this->model_hms->search_result_by_otward_operated($filter);
                 }
+
                 $data['operation_list'] = $this->model_hms->search_result_by_ot_patid($filter);
                 $json['result_html']=$this->load->view('operation/view_operationlist',$data,true);
             } elseif (!empty($this->input->get("search_by_otward"))) {

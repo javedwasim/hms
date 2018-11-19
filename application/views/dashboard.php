@@ -50,7 +50,7 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
                 <!-- ./col -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <a href="<?php echo base_url('dashboard/view_patients'); ?>" class="small-box bg-green">
+                    <a data-href="dashboard/view_patients" class="small-box bg-green ahref" id="2" href="javascript:void(0)">
                         <div class="inner">
                             <h3 style="opacity: .0">Head3</h3>
                             <p>View Patient Records</p>
@@ -64,7 +64,7 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
                 <!-- ./col -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <a href="<?php echo base_url('dashboard/patient_chart'); ?>" class="small-box bg-orange">
+                    <a data-href="dashboard/patient_chart" class="small-box bg-orange ahref" id="3" href="javascript:void(0)">
                         <div class="inner">
                             <h3 style="opacity: .0">Head3</h3>
                             <p>History &amp; Patient Chart</p>
@@ -78,7 +78,7 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
                 <!-- ./col -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <a href="<?php echo base_url('dashboard/patient_reports'); ?>" class="small-box bg-red">
+                    <a data-href="dashboard/patient_reports" class="small-box bg-red ahref" id="Radiology-Lab-Reports" href="javascript:void(0)">
                         <div class="inner">
                             <h3 style="opacity: .0">Head3</h3>
 
@@ -93,7 +93,7 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
                 <!-- ./col -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <a href="<?php echo base_url('dashboard/operation_theatre'); ?>" class="small-box bg-yellow">
+                    <a data-href="dashboard/operation_theatre" class="small-box bg-yellow ahref" id="4" href="javascript:void(0)">
                         <div class="inner">
                             <h3 style="opacity: .0">Head3</h3>
                             <p>OT Bookings</p>
@@ -106,7 +106,7 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
                 <!-- ./col -->
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <a href="<?php echo base_url('dashboard/bedslist'); ?>" class="small-box bg-purple">
+                    <a data-href="dashboard/bedslist" class="small-box bg-purple ahref" href="javascript:void(0)" id="7">
                         <div class="inner">
                             <h3 style="opacity: .0">Head3</h3>
                             <p>Ward/Room List</p>

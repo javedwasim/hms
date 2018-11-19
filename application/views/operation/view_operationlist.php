@@ -18,12 +18,12 @@
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                     <li class="<?php
-                    if (!isset($operated_list)) {
+                    if (isset($tab_no) && ($tab_no==1)) {
                         echo "active";
                     }
                     ?>"><a href="#tab_1" data-toggle="tab">Operation List</a></li>
                     <li class="<?php
-                    if (isset($operated_list)) {
+                    if (!isset($tab_no) && ($tab_no==1)) {
                         echo "active";
                     }
                     ?>"><a href="#tab_2" data-toggle="tab">Operated Patients</a></li>
@@ -422,7 +422,7 @@
                                                                             <td><?php echo $opd_key['otOperationType']; ?></td>
                                                                             <td><?php echo $opd_key['otPatNo']; ?></td>
                                                                             <?php $patient_list = $this->model_hms->get_patirnt_name_by_id($opd_key['otPatNo']); ?>
-                                                                            <td><?php echo $patient_list->patName; ?></td>
+                                                                            <td><?php echo isset($patient_list->patName)?$patient_list->patName:''; ?></td>
                                                                             <?php $user_list = $this->model_hms->get_user_name_by_id($opd_key['otBookedBy']); ?>
                                                                             <td><?php echo $user_list->full_name; ?></td>
                                                                             <?php $user_list_surgeon = $this->model_hms->get_user_name_by_id($opd_key['otSurgeon']); ?>

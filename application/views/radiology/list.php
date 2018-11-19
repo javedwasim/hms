@@ -401,7 +401,7 @@
                         $('#report_list_container').empty();
                         //$('#report_list_container').append(response.result_html);
                         //$('#title').html('SMS | Radiology');
-                        toastr["error"]('Record save successfully!.');
+                        toastr["success"]('Record save successfully!.');
 
                     }
                 },
