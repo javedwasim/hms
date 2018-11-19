@@ -177,10 +177,10 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <div class="col-md-12 res-img" id="consent-form">
-                                            <label id="label-name"><?php echo $patient_list->patName . " " . $patient_list->patNoKType . " " . $patient_list->patNoK; ?></label>
+                                            <label id="label-name"><?php echo isset($patient_list->patName)?$patient_list->patName . " " . $patient_list->patNoKType . " " . $patient_list->patNoK:''; ?></label>
                                             <br>
                                             <label class="pull-right"
-                                                   id="label-reg"><?php echo $patient_list->regNo; ?></label>
+                                                   id="label-reg"><?php echo isset($patient_list->regNo)?$patient_list->regNo:''; ?></label>
                                         </div>
                                     </div><!-- /.form-group -->
                                 </div><!-- /.col -->
@@ -202,7 +202,7 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
                             <input type="hidden" id="pre-opf-no" name="pre-opf-no"
                                    value="<?php echo $pre_op_fitness->preOpFNo; ?>">
                             <input type="hidden" id="reg-no" name="reg-no"
-                                   value="<?php echo $pre_op_fitness->regNo; ?>">
+                                   value="<?php echo isset($pre_op_fitness->regNo)?$pre_op_fitness->regNo:''; ?>">
                             <input type="hidden" id="ot-booking-no" name="ot-booking-no"
                                    value="<?php echo $pre_op_fitness->otBookingNo; ?>">
                             <div class="row">
@@ -336,7 +336,7 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
                             <input type="hidden" id="pre-opo-no" name="pre-opo-no"
                                    value="<?php echo $pre_op_order->preOpONo; ?>">
                             <input type="hidden" id="reg-no1" name="reg-no1"
-                                   value="<?php echo $pre_op_order->regNo; ?>">
+                                   value="<?php echo isset($pre_op_order->regNo)?$pre_op_order->regNo:''; ?>">
                             <input type="hidden" id="ot-booking-no1" name="ot-booking-no1"
                                    value="<?php echo $pre_op_order->otBookingNo; ?>">
 
@@ -352,7 +352,7 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
                                 <div class="col-md-4">
                                     <div class="col-md-12">
                                         <label>MR#</label>&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <label class="checklist-text"><?php echo $patient_list->regNo; ?></label>
+                                        <label class="checklist-text"><?php echo isset($patient_list->regNo)?$patient_list->regNo:''; ?></label>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
