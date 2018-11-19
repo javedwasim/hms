@@ -58,7 +58,7 @@
                                     <option value="">Please select</option>
                                     <?php foreach ($patients as $patient): ?>
                                         <option value="<?php echo $patient['regNo']; ?>"<?php echo isset($filter)&&($filter == $patient['regNo'])?'selected':''; ?>>
-                                            <?php echo $patient['patName'].' '.$patient['patNoKType'].' '.$patient['patNoK']; ?></option>
+                                            <?php  echo $patient['regNo'].' '.$patient['patName'].' '.$patient['patNoKType'].' '.$patient['patNoK']; ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </form>

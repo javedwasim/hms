@@ -36,7 +36,7 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
             <div class="row">
                 <div class="col-lg-3 col-xs-6">
                     <!-- small box -->
-                    <a href="<?php echo base_url('dashboard/new_admission'); ?>" class="small-box bg-aqua">
+                    <a data-href="dashboard/new_admission" class="small-box bg-aqua ahref" id="1" href="javascript:void(0)">
                         <div class="inner">
                             <h3 style="opacity: .0">Head3</h3>
 

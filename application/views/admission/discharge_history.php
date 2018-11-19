@@ -55,7 +55,7 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
                         <option value="">Please select</option>
                         <?php foreach ($patients as $patient): ?>
                             <option value="<?php echo $patient['regNo']; ?>"<?php echo isset($filter['patient_id'])&&($filter['patient_id'] == $patient['regNo'])?'selected':''; ?>>
-                                <?php echo $patient['patName'].' '.$patient['patNoKType'].' '.$patient['patNoK']; ?></option>
+                                <?php echo $patient['regNo'].' '.$patient['patName'].' '.$patient['patNoKType'].' '.$patient['patNoK']; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

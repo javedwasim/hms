@@ -459,15 +459,18 @@
                     {
                         toastr["success"](response.message);
                         $("#add_patient_form")[0].reset();
+                        $('#spinner').hide();
                     }
                     else
                     {
                         toastr["error"](response.message);
+                        $('#spinner').hide();
                     }
                 },
                 error: function(e)
                 {
                     toastr["error"]('seem to be an error');
+                    $('#spinner').hide();
                 }
             });
         }));
