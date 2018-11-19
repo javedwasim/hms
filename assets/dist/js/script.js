@@ -364,3 +364,22 @@ $(document.body).on('click', '.ahref', function(){
         }
     });
 });
+
+
+$(document.body).on('click', '#patient_report_btn2', function(){
+    var base_url = $('#base').val();
+    var patient_id = $(this).attr('data-href');
+    $.ajax({
+        url: base_url+'dashboard/patient_reports',
+        type: 'post',
+        data:{patient_id:patient_id},
+        cache: false,
+        success: function(response) {
+            if(response.result_html != ''){
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+                $('#title').html('SMS | Radiology');
+            }
+        }
+    });
+});

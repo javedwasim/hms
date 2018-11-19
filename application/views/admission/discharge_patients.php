@@ -144,7 +144,7 @@
                                                         <td><?php echo $p_key['patSex']; ?></td>
                                                         <td><?php echo $p_key['patbed_id']; ?></td>
                                                         <td><?php echo $p_key['patward_id']; ?></td>
-                                                        <td><?php $disease = $this->model_hms->get_disease_by_id($p_key['patDisease_id']); echo $disease->disease_name; ?></td>
+                                                        <td><?php $disease = $this->model_hms->get_disease_by_id($p_key['patDisease_id']); echo isset($disease->disease_name)?$disease->disease_name:''; ?></td>
                                                         <td><?php $date = $p_key['patAdmDate']; $datetime = date(' d-m-Y h:i a', strtotime($date)); echo $datetime; ?></td>
                                                         <td id="status"><?php echo $p_key['patStatus']; ?></td>
                                                         <?php

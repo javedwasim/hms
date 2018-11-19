@@ -83,7 +83,7 @@
                             <label>Name</label>
                             <input tabindex=3 class="form-control" maxlength="15" type="text"
                                value="<?php echo isset($patient_list['patName'])?$patient_list['patName']:''; ?>"
-                               id="patName" name="patName" placeholder="Type Name">
+                               id="patName" name="patName" placeholder="Type Name" required>
                         </div><!-- /.form-group -->
 
                     </div>
@@ -95,7 +95,7 @@
                             <div class="col-md-4" style="padding: 0">
                                 <select tabindex=4 class="form-control next-of-kin"
                                         style="width: 100%;" name="patNoKType" id="id1">
-                                    <option></option>
+                                    <option value="">.....</option>
                                     <option value="S/O"<?php echo isset($patient_list['patNoKType'])&&($patient_list['patNoKType']=='S/O')?'selected':''; ?>>S/O</option>
                                     <option value="D/O"<?php echo isset($patient_list['patNoKType'])&&($patient_list['patNoKType']=='D/O')?'selected':''; ?>>D/O</option>
                                     <option value="W/O"<?php echo isset($patient_list['patNoKType'])&&($patient_list['patNoKType']=='W/O')?'selected':''; ?>>W/O</option>
@@ -153,7 +153,7 @@
                         <div class="form-group">
                             <select class="form-control bld-grp" style="width: 100%;"
                                     tabindex="9" name="patBldGrp">
-                                <option></option>
+                                <option value="">Please select</option>
                                 <option value="A+VE"<?php echo isset($patient_list['patBldGrp'])&&($patient_list['patBldGrp']=='A+VE')?'selected':''; ?>>A+VE</option>
                                 <option value="A-VE"<?php echo isset($patient_list['patBldGrp'])&&($patient_list['patBldGrp']=='A-VE')?'selected':''; ?>>A-VE</option>
                                 <option value="B+VE"<?php echo isset($patient_list['patBldGrp'])&&($patient_list['patBldGrp']=='B+VE')?'selected':''; ?>>B+VE</option>
@@ -169,7 +169,7 @@
                         <div class="form-group">
                             <div class="col-md-9" style="padding: 0">
                                 <label>Disease</label>
-                                <select tabindex=10 class="form-control disease select2" style="width: 100%;" name="patDisease_id" id="id10">
+                                <select class="form-control disease select2" name="patDisease_id" required>
                                     <option value="">Please select</option>
                                     <?php foreach ($diseases as $disease): ?>
                                         <option value="<?php echo $disease['disease_id']; ?>"
@@ -470,6 +470,15 @@
 <!-- /.content -->
 <script>
     $(document).ready(function () {
+        var dNow = new Date();
+        var localdate = dNow.getDate() + '-' + (dNow.getMonth() + 1) + '-' + dNow.getFullYear() + ' ' + formatAMPM(dNow);
+        $('#datepicker1').val(localdate);
+        var admlocaldate = dNow.getFullYear()+ '-' +(dNow.getMonth() + 1) + '-' +dNow.getDate();
+        var admlocaltime = formatAMPM(dNow);
+        $('#datepicker-adm').val(admlocaldate);
+        $('#timepicker-adm').val(admlocaltime);
+        console.log(admlocaldate);
+
         $('.select2').select2({});
         $('#datepicker-adm').datepicker({
             format: 'yyyy-mm-dd'
@@ -511,4 +520,15 @@
             });
         }));
     });
+
+    function formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
 </script>

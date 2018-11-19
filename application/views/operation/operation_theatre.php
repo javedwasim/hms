@@ -29,6 +29,7 @@
                         <form name="search-by-name" id="search-by-name" method="get"
                               action="#details">
                             <select class="patName-select form-control select2" name="search_by_cnic" id="search_by_cnic">
+                                <option value="">Please select</option>
                                 <?php foreach ($patients as $patient): ?>
                                     <option value="<?php echo $patient['regNo']; ?>"<?php echo isset($filter)&&($filter == $patient['regNo'])?'selected':''; ?>>
                                         <?php echo $patient['patName'].' '.$patient['patNoKType'].' '.$patient['patNoK']; ?></option>
@@ -124,7 +125,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label><?php $disease = $this->model_hms->get_disease_by_id($p_key['patDisease_id']);
-                                            echo $disease->disease_name; ?></label>
+                                            echo isset($disease->disease_name)?$disease->disease_name:''; ?></label>
                                     </div>
                                 </div>
                             </div>
@@ -208,7 +209,7 @@
                                 <label>Surgeon</label>
                                 <select class="form-control ot-surgeon select2" id="ot-surgeon-name"
                                         name="ot-surgeon-name" required="required">
-                                    <option></option>
+                                    <option value="">Please select</option>
                                     <?php $surgeon_list = $this->model_hms->get_surgeon_list(); ?>
                                     <?php if (!empty($surgeon_list)) {
                                         foreach ($surgeon_list as $sl_key) { ?>
@@ -222,7 +223,7 @@
                             <div class="form-group">
                                 <label>Operation Theatre</label>
                                 <select required="required" class="form-control ot-ward select2"  name="ot-ward">
-                                    <option></option>
+                                    <option value="">Please select</option>
                                     <?php $operation_theatre = $this->model_hms->get_operation_theatre_list(); ?>
                                     <?php if (!empty($operation_theatre)) {
                                         foreach ($operation_theatre as $opt_key) { ?>
@@ -290,6 +291,15 @@
 <!-- /.content -->
 <script>
     $(document).ready(function () {
+        var dNow = new Date();
+        var localdate = dNow.getDate() + '-' + (dNow.getMonth() + 1) + '-' + dNow.getFullYear() + ' ' + formatAMPM(dNow);
+        $('#datepicker1').val(localdate);
+        var admlocaldate = dNow.getFullYear()+ '-' +(dNow.getMonth() + 1) + '-' +dNow.getDate();
+        var admlocaltime = formatAMPM(dNow);
+        $('#datepicker-ot').val(admlocaldate);
+        $('#timepicker1').val(admlocaltime);
+        console.log(admlocaldate);
+
         $('.select2').select2();
         $('#datepicker-ot').datepicker({
             format: 'yyyy-mm-dd'
@@ -301,4 +311,15 @@
         });
 
     });
+
+    function formatAMPM(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return strTime;
+    }
 </script>

@@ -205,7 +205,7 @@
                                                     <?php $ward_list = $this->model_hms->get_ward_by_id($patient['patward_id']); ?>
                                                     <td><?php echo $ward_list->wardName; ?></td>
                                                     <td><?php $disease = $this->model_hms->get_disease_by_id($patient['patDisease_id']);
-                                                        echo $disease->disease_name;
+                                                        echo isset($disease->disease_name)?$disease->disease_name:'';
                                                         ?></td>
                                                     <td><?php
                                                         $date = $patient['patAdmDate'];

@@ -49,7 +49,7 @@
                                             <div class="form-group">
                                                 <label>Operation Theater</label>
                                                 <select class="form-control otward-select select2"  name="search_by_otward" id="search_by_otward">
-                                                    <option value="">All</option>
+                                                    <option value="">Please select</option>
                                                     <?php foreach ($ot_wards as $ward): ?>
                                                         <option value="<?php echo $ward['otwardId']; ?>"
                                                             <?php echo isset($filter['toward'])&&($filter['toward']==$ward['otwardId'])?'selected':''; ?>>
@@ -62,7 +62,7 @@
                                             <div class="form-group">
                                                 <label>MR# or Patient Name</label>
                                                 <select class="form-control select2" name="search_by_cnic" id="ot_patient_id">
-                                                    <option value="">All</option>
+                                                    <option value="">Please select</option>
                                                     <?php foreach ($patients as $patient): ?>
                                                         <option value="<?php echo $patient['regNo']; ?>"
                                                             <?php echo isset($filter['patient_id'])&&($filter['patient_id']==$patient['regNo'])?'selected':''; ?>>
@@ -289,7 +289,7 @@
                                             <label>Operation Theater</label>
                                             <select class="form-control operated-otward-select"
                                                     id="search_by_otward_operated"  name="search_by_otward_operated">
-                                                <option value="0">All</option>
+                                                <option value="">Please select</option>
                                                 <?php foreach ($ot_wards as $ward): ?>
                                                     <option value="<?php echo $ward['otwardId']; ?>"
                                                         <?php echo isset($filter['search_by_otward_operated'])&&($filter['search_by_otward_operated']==$ward['otwardId'])?'selected':''; ?>>

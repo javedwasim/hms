@@ -190,7 +190,7 @@ echo '<input type="hidden" id="base" value="' . $base_url . '">';
                                                 <td><?php echo $p_key['patbed_id']; ?></td>
                                                 <td><?php echo $p_key['patward_id']; ?></td>
                                                 <td><?php $disease = $this->model_hms->get_disease_by_id($p_key['patDisease_id']);
-                                                    echo $disease->disease_name; ?></td>
+                                                    echo isset($disease->disease_name)?$disease->disease_name:''; ?></td>
                                                 <td><?php echo $p_key['patAdmDate']; ?></td>
                                                 <td id="status"><?php echo $p_key['patStatus']; ?></td>
                                                 <?php

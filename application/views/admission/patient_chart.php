@@ -264,8 +264,8 @@
                             <h3 class="box-title" style="margin-top:10px; ">History &amp; Plan Chart Details</h3>
                         </div>
                         <div class="col-md-5 col-md-offset-3" style="margin-bottom: 10px;">
-                            <a href="<?php echo base_url('dashboard/patient_report/'.$p_key['regNo']); ?>"
-                               target="_blank" class="btn btn-primary">View Patient Reports</a>
+                            <a data-href="<?php echo $p_key['regNo']; ?>" id="patient_report_btn2" href="javascript:void(0)"
+                               class="btn btn-primary">View Patient Reports</a>
                             <a href="<?php echo base_url('dashboard/patient_vitals_sheet?search_by_cnic=' . $p_key['regNo']); ?>"
                                target="_blank" class="btn btn-primary">View Patient Vitals Sheet</a>
 
