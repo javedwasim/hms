@@ -54,7 +54,7 @@
                                     <option value=""></option>
                                     <?php foreach ($patients as $patient): ?>
                                         <option value="<?php echo $patient['regNo']; ?>"<?php echo isset($filter)&&($filter == $patient['regNo'])?'selected':''; ?>>
-                                            <?php echo $patient['patName'].' '.$patient['patNoKType'].' '.$patient['patNoK']; ?></option>
+                                            <?php echo $patient['regNo'].' '.$patient['patName'].' '.$patient['patNoKType'].' '.$patient['patNoK']; ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </form>
@@ -264,7 +264,7 @@
                             <h3 class="box-title" style="margin-top:10px; ">History &amp; Plan Chart Details</h3>
                         </div>
                         <div class="col-md-5 col-md-offset-3" style="margin-bottom: 10px;">
-                            <a href="<?php echo base_url('dashboard/patient_reports?search_by_cnic=' . $p_key['regNo']); ?>"
+                            <a href="<?php echo base_url('dashboard/patient_report/'.$p_key['regNo']); ?>"
                                target="_blank" class="btn btn-primary">View Patient Reports</a>
                             <a href="<?php echo base_url('dashboard/patient_vitals_sheet?search_by_cnic=' . $p_key['regNo']); ?>"
                                target="_blank" class="btn btn-primary">View Patient Vitals Sheet</a>

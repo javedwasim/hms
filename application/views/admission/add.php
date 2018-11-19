@@ -36,7 +36,7 @@
 <!-- Main content -->
 <section class="content">
     <form action="<?php echo base_url('dashboard/insert_user_db'); ?>" class="submit-form" method="post"
-          enctype="multipart/form-data" id="add_patient_form">
+          enctype="multipart/form-data" id="add_patient_forms">
         <div class="box  box-primary">
             <div class="box-header with-border">
                 <h3 class="box-title">Patient Personal Information</h3>
@@ -440,7 +440,7 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <!--<input type="submit" class="btn bg-blue margin" value ="Admit Patient &amp; Print Adm. Sheet"</input>-->
-                        <button type="submit" class="btn bg-blue margin submit-btn custom-submit-btn">
+                        <button type="submit" class="btn bg-blue margin submit-btn">
                             <i class="fa fa-user-plus" aria-hidden="true"></i><?php echo isset($patient_reg_no)?'Update Paitent':'Admit Patient' ?></button>
                     </div>
                 </div><!-- /.col -->
@@ -478,7 +478,7 @@
             defaultTime: false
         });
 
-        $("#add_patient_form").on('submit',(function(e) {
+        $("#add_patient_forms").on('submit',(function(e) {
             e.preventDefault();
             $.ajax({
                 url: "<?php echo base_url('dashboard/insert_user_db'); ?>",
@@ -497,7 +497,7 @@
                     if(response.success)
                     {
                         toastr["success"](response.message);
-                        $("#add_patient_form")[0].reset();
+                        $("#add_patient_forms")[0].reset();
                     }
                     else
                     {

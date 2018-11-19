@@ -55,7 +55,7 @@
                                 <option value="0">All</option>
                                 <?php foreach ($patients as $patient): ?>
                                     <option value="<?php echo $patient['regNo']; ?>"<?php echo isset($filter['search_by_name'])&&($filter['search_by_name'] == $patient['regNo'])?'selected':''; ?>>
-                                        <?php echo $patient['patName'].' '.$patient['patNoKType'].' '.$patient['patNoK']; ?></option>
+                                       <span style="color;: #ffff"><?php echo $patient['regNo']; ?></span> <?php echo $patient['patName'].' '.$patient['patNoKType'].' '.$patient['patNoK']; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>

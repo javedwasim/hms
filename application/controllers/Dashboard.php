@@ -252,6 +252,12 @@ class dashboard extends CI_Controller {
 
     }
 
+    public function patient_report($id){
+        $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($id);
+        $data['report_list'] = $this->model_hms->report_view($id);
+        $this->load->view('patient_reports', $data);
+    }
+
     public function patient_reports() {
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, VIEW_RADIOLOGY_SECTION); //1, can_book_ot
