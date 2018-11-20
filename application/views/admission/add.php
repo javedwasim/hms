@@ -114,13 +114,13 @@
                             <br>
                             <input type="radio" name="patSex" class="custom-radio" id="sex-male" value="Male"
                                 <?php echo isset($patient_list['patSex'])&&($patient_list['patSex']=='Male')?'checked':''; ?>>
-                            <label class="radio-labels">Male</label>
+                            <label class="radio-labels" style="margin: 0px">Male</label>
                             <input type="radio" name="patSex" class="custom-radio" id="sex-female" value="Female"
                                 <?php echo isset($patient_list['patSex'])&&($patient_list['patSex']=='Female')?'checked':''; ?>>
-                            <label class="radio-labels">Female</label>
+                            <label class="radio-labels" style="margin: 0px">Female</label>
                             <input type="radio" name="patSex" class="custom-radio" id="sex-other" value="Other"
                                 <?php echo isset($patient_list['patSex'])&&($patient_list['patSex']=='Other')?'checked':''; ?>>
-                            <label class="radio-labels">Other</label>
+                            <label class="radio-labels" style="margin: 0px">Other</label>
                         </div><!-- /.form-group -->
                     </div><!-- /.col -->
 
@@ -487,6 +487,12 @@
             defaultTime: false
         });
 
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_flat',
+            radioClass: 'iradio_flat',
+            increaseArea: '20%' // optional
+        });
+
         $("#add_patient_forms").on('submit',(function(e) {
             e.preventDefault();
             $.ajax({
@@ -519,6 +525,17 @@
                 }
             });
         }));
+
+        $('.next-of-kin').change(function () {
+            var nokVal = $('.next-of-kin').val();
+            if (nokVal == "S/O") {
+                $('#sex-male').iCheck('check');
+            }
+            else {
+
+                $('#sex-female').iCheck('check');
+            }
+        });
     });
 
     function formatAMPM(date) {

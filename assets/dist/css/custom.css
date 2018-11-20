@@ -226,7 +226,6 @@ font-size:12px !important;
     border: 1px solid black;
     opacity: 0.6;
     filter: alpha(opacity=60);
-    top: 322px;
     /*overflow: auto;*/
     width: 100%; /* width of the spinner gif */
     height: 100%; /*hight of the spinner gif +2px to fix IE8 issue */
@@ -234,4 +233,9 @@ font-size:12px !important;
 
 .active_menu:hover{
     background-color: #007bff;
+}
+
+#img-spinner{
+    position: absolute;
+    top: 325px;
 }
