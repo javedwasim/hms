@@ -41,7 +41,7 @@
 <script src="<?php echo base_url('/assets/dist/js/jasny-bootstrap.min.js'); ?>"></script>
 <script src="<?php echo base_url('/assets/plugins/iCheck/icheck.min.js'); ?>"></script>
 <!-- Ticker JS -->
-<script src="<?php echo base_url('/assets/dist/js/pages/jquery.vticker.js'); ?>"></script>
+<!--<script src="--><?php //echo base_url('/assets/dist/js/pages/jquery.vticker.js'); ?><!--"></script>-->
 <script src="<?php echo base_url('/assets/dist/js/ekko-lightbox.js'); ?>"></script>
 <script src="<?php echo base_url('/assets/dist/js/ekko-lightbox.js.map'); ?>"></script>
 <script src="<?php echo base_url('/assets/dist/js/ekko-lightbox.min.js'); ?>"></script>

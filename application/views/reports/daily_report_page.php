@@ -50,7 +50,7 @@
                         <label>MR# or Patient Name</label>
                         <form name="search-by-name" id="search-by-pat-name" method="get"
                               action="<?php echo base_url('dashboard/daily_reports'); ?>">
-                            <select class="patname-select form-control select2" name="search_by_cnic" id="search_by_cnic">
+                            <select class="patname-select form-control select2" name="search_by_cnic" id="daily_report_search">
                                 <option value="">Please select</option>
                                 <?php foreach ($patients as $patient): ?>
                                     <option value="<?php echo $patient['regNo']; ?>"<?php echo isset($filter)&&($filter == $patient['regNo'])?'selected':''; ?>>
@@ -239,70 +239,46 @@
         <div class="box-body">
             <div class="row">
                 <div class="col-sm-12" style="overflow-y: auto;">
-                    <table id="reports-search"
-                           class="table table-bordered table-hover dataTable"
+                    <table id="reports-search" class="table table-bordered table-hover dataTable"
                            role="grid" aria-describedby="example2_info">
                         <thead>
-                        <tr role="row">
-                            <th class="sorting_asc" tabindex="0" aria-controls="example2"
-                                rowspan="1" colspan="1" aria-sort="ascending"
-                                aria-label="Rendering engine: activate to sort column descending">
-                                Report#
-                            </th>
-                            <th class="sorting" tabindex="0" aria-controls="example2"
-                                rowspan="1" colspan="1"
-                                aria-label="Platform(s): activate to sort column ascending">
-                                Report Name
-                            </th>
-                            <th class="sorting" tabindex="0" aria-controls="example2"
-                                rowspan="1" colspan="1"
-                                aria-label="Platform(s): activate to sort column ascending">
-                                ReportType
-                            </th>
-                            <th class="sorting" tabindex="0" aria-controls="example2"
-                                rowspan="1" colspan="1"
-                                aria-label="Platform(s): activate to sort column ascending">
-                                Comments
-                            </th>
-                            <th class="sorting" tabindex="0" aria-controls="example2"
-                                rowspan="1" colspan="1"
-                                aria-label="CSS grade: activate to sort column ascending">
-                                Actions
-                            </th>
-                        </tr>
+                            <tr role="row">
+                                <th class="sorting_asc" tabindex="0" aria-controls="example2"
+                                    rowspan="1" colspan="1" aria-sort="ascending"
+                                    aria-label="Rendering engine: activate to sort column descending">
+                                    Report#
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="example2"
+                                    rowspan="1" colspan="1"
+                                    aria-label="Platform(s): activate to sort column ascending">
+                                    Report Name
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="example2"
+                                    rowspan="1" colspan="1"
+                                    aria-label="Platform(s): activate to sort column ascending">
+                                    ReportType
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="example2"
+                                    rowspan="1" colspan="1"
+                                    aria-label="Platform(s): activate to sort column ascending">
+                                    Comments
+                                </th>
+                                <th class="sorting" tabindex="0" aria-controls="example2"
+                                    rowspan="1" colspan="1"
+                                    aria-label="CSS grade: activate to sort column ascending">
+                                    Actions
+                                </th>
+                            </tr>
                         </thead>
-                        <!--                                        <tbody>
-                                        <?php
-                        if (!empty($report_list)) {
-                            foreach ($report_list as $index => $r_key) {
-                                ?>
-                                                                                    <tr role="row" class="odd">
-                                                                                        <td class="sorting_1" id="regNo"><?php echo $index + 1; ?>
-                                                                                            <input type="hidden" class="reportID" value="<?php echo $r_key['reportId']; ?>">
-                                                                                        </td>
-                                                                                        <td><?php echo $r_key['reportName']; ?></td>
-                                                                                        <td><?php echo $r_key['reportType']; ?></td>
-                                                                                        <td><?php echo $r_key['reportComments']; ?></td>
-                                                                                        <td>
-
-                                                                                            <a href="<?php echo base_url('/assets/dist/img/reports/') . $r_key['reportPath']; ?>" data-toggle="lightbox" class="btn btn-default">
-                                                                                                <i class="fa fa-eye" aria-hidden="true"></i>
-                                                                                            </a>
-                                                                                            <button class="btn btn-default delete-report">
-                                                                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
-                                                                                            </button>
-                                                                                        </td>
-                                                                                    </tr>
-                                                <?php
-                            }
-                        }
-                        ?>
-                                        </tbody>
-                                        <tfoot>
-
-                                        </tfoot>-->
+                        <tbody>
+<!--                            --><?php //foreach ($daily_report as $report): ?>
+<!--                                <tr>-->
+<!--                                    <td>--><?php //echo $report['id']; ?><!--</td>-->
+<!--                                    <td>--><?php //echo $report['id']; ?><!--</td>-->
+<!--                                </tr>-->
+<!--                            --><?php //endforeach; ?>
+                        </tbody>
                     </table>
-
                 </div>
             </div>
         </div>
@@ -316,7 +292,8 @@
             </div>
         </div><!-- /.box-header -->
         <div class="box-body">
-            <form action="" method="post" enctype="multipart/form-data" autocomplete="off">
+            <form action="" method="post" enctype="multipart/form-data" autocomplete="off" id="daily_report_form">
+                <input type="hidden" name="regNo" value="<?php echo $patient_list[0]['regNo']; ?>">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -325,25 +302,24 @@
                                 <div class="input-group-addon">
                                     <i class="fa fa-clock-o"></i>
                                 </div>
-                                <input class="form-control " name="drp-date" required="required" type="text"
-                                       id="drp-date" placeholder="Select Time " autocomplete="off">
+                                <input class="form-control " name="drp_date"  type="text" id="drp-date" placeholder="Select Time " autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>DOA/POD</label>
-                            <input class="form-control" id="drp-doa" name="drp_doa" maxlength="10" placeholder="DOA/POD" required="required">
+                            <input class="form-control" id="drp-doa" name="drp_doa" maxlength="10" placeholder="DOA/POD" >
                         </div>
                         <div class="form-group">
                             <label>A/C</label>
-                            <input class="form-control" id="dr-pac" required="required" type="text" maxlength="10" name="drp_ac" placeholder="A/C">
+                            <input class="form-control" id="dr-pac"  type="text" maxlength="10" name="drp_ac" placeholder="A/C">
                         </div>
                         <div class="form-group">
                             <label>Pulse</label>
-                            <input class="form-control" id="drp-pulse" name="drp_pulse" maxlength="10" placeholder="Pulse" required="required">
+                            <input class="form-control" id="drp-pulse" name="drp_pulse" maxlength="10" placeholder="Pulse" >
                         </div>
                         <div class="form-group">
                             <label>R.R</label>
-                            <input class="form-control" id="drp-rr" name="drp_rr" placeholder="R.R" maxlength="10" required="required">
+                            <input class="form-control" id="drp-rr" name="drp_rr" placeholder="R.R" maxlength="10" >
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -353,25 +329,25 @@
                                 <div class="input-group-addon">
                                     <i class="fa fa-clock-o"></i>
                                 </div>
-                                <input class="form-control " required="required" type="text"
+                                <input class="form-control "  type="text"
                                        id="drp-time" name="drp_time" placeholder="Select Time" autocomplete="off">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>C/O</label>
-                            <input type="text" class="form-control" id="drp-co" name="drp_co" maxlength="10" placeholder="C/O" required="required" />
+                            <input type="text" class="form-control" id="drp-co" name="drp_co" maxlength="10" placeholder="C/O"  />
                         </div>
                         <div class="form-group">
                             <label>Wound Examination</label>
-                            <input class="form-control" id="drp-wound" required="required" maxlength="10" type="text" name="drp_wound" placeholder="Wound Examination">
+                            <input class="form-control" id="drp-wound"  maxlength="10" type="text" name="drp_wound" placeholder="Wound Examination">
                         </div>
                         <div class="form-group">
                             <label>B.P</label>
-                            <input type="text" class="form-control" id="drp-bp" name="drp_bp" maxlength="10" placeholder="B.P" required="required" />
+                            <input type="text" class="form-control" id="drp-bp" name="drp_bp" maxlength="10" placeholder="B.P"  />
                         </div>
                         <div class="form-group">
                             <label>Temp</label>
-                            <input type="text" class="form-control" id="drp-temp" name="drp_temp" maxlength="10" placeholder="Temp" required="required" />
+                            <input type="text" class="form-control" id="drp-temp" name="drp_temp" maxlength="10" placeholder="Temp"  />
                         </div>
                     </div>
                 </div>
@@ -384,50 +360,50 @@
                     </div>
                 </div>
                 <div class="row">
-                    <h3 class="text-muted">Systemic Examination</h3>
+                    <h3 class="text-muted" style="margin-left: 12px;">Systemic Examination</h3>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>GIT</label>
-                            <input class="form-control" id="drp-git" required="required" maxlength="10" type="text" name="drp_git" placeholder="GIT">
+                            <input class="form-control" id="drp-git"  maxlength="10" type="text" name="drp_git" placeholder="GIT">
                         </div>
                         <div class="form-group">
                             <label>CVS</label>
-                            <input class="form-control" type="text" id="drp-cvs" name="drp_cvs" maxlength="10" placeholder="CVS" required="required">
+                            <input class="form-control" type="text" id="drp-cvs" name="drp_cvs" maxlength="10" placeholder="CVS" >
                         </div>
                         <div class="form-group">
                             <label>CNS</label>
-                            <input type="text" class="form-control" id="drp-cns" name="drp_cns" maxlength="10" placeholder="CNS" required="required">
+                            <input type="text" class="form-control" id="drp-cns" name="drp_cns" maxlength="10" placeholder="CNS" >
                         </div>
                         <div class="form-group">
                             <label>Resp.</label>
-                            <input class="form-control" type="text" id="drp-resp" name="drp_resp" maxlength="10" placeholder="Resp" required="required">
+                            <input class="form-control" type="text" id="drp-resp" name="drp_resp" maxlength="10" placeholder="Resp" >
                         </div>
                         <div class="form-group">
                             <label>Intake</label>
-                            <input type="text" class="form-control" id="drp-intake" name="drp_intake" maxlength="10" placeholder="Intake" required="required">
+                            <input type="text" class="form-control" id="drp-intake" name="drp_intake" maxlength="10" placeholder="Intake" >
                         </div>
 
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Output(NG/Foley's / DRAINS)</label>
-                            <input type="text" class="form-control" id="drp-output" name="drp_output" maxlength="10" placeholder="Output(NG/Foley's / DRAINS)" required="required">
+                            <input type="text" class="form-control" id="drp-output" name="drp_output" maxlength="10" placeholder="Output(NG/Foley's / DRAINS)" >
                         </div>
                         <div class="form-group">
                             <label>Pt. Seen by 1 House Officer</label>
-                            <input type="text"  class="form-control" id="drp-seenby-officer" required="required" maxlength="10" name="drp_seenby_officer" placeholder="Pt. Seen by 1 House Officer">
+                            <input type="text"  class="form-control" id="drp-seenby-officer"  maxlength="10" name="drp_pt_seen" placeholder="Pt. Seen by 1 House Officer">
                         </div>
                         <div class="form-group">
                             <label>MO/PGR</label>
-                            <input type="text" class="form-control" id="drp-pgr" name="drp_pgr" maxlength="10" placeholder="MO/PGR" required="required">
+                            <input type="text" class="form-control" id="drp-pgr" name="drp_pgr" maxlength="10" placeholder="MO/PGR" >
                         </div>
                         <div class="form-group">
                             <label>Plan</label>
-                            <input class="form-control" id="drp-plan" required="required" maxlength="10" type="text" name="drp_plan" placeholder="Plan">
+                            <input class="form-control" id="drp-plan"  maxlength="10" type="text" name="drp_plan" placeholder="Plan">
                         </div>
                         <div class="form-group">
                             <label>Consultant Advice</label>
-                            <input type="text" class="form-control" id="drp-consultant" maxlength="10" name="drp_consultant" placeholder="Consultant Advice" required="required">
+                            <input type="text" class="form-control" id="drp-consultant" maxlength="10" name="drp_consultant" placeholder="Consultant Advice" >
                         </div>
 
                     </div>
@@ -448,12 +424,19 @@
 
 <script>
     $(document).ready(function () {
+        $('#drp-date').datepicker({
+            format: 'yyyy-mm-dd',
+            autohide:true,
+        });
+
+        $('#drp-time').timepicker({
+            defaultTime: false
+        });
         $('.select2').select2();
 
         var isVisible = 0;
         $('.new-report').hide();
         $('.btn-new-report').on('click', function () {
-
             switch (isVisible) {
                 case 0:
                     $('.new-report').slideDown();
@@ -473,13 +456,11 @@
             }
         });
 
-        $("#patient_report_form").on('submit',(function(e) {
+        $("#daily_report_form").on('submit',(function(e) {
             e.preventDefault();
-            var patient_id = $('#patient_report_select').val();
-            $('#patient_id').val(patient_id);
             var base_url = $('#base').val();
             $.ajax({
-                url: base_url+'dashboard/patient_reports',
+                url: base_url+'dashboard/save_daily_report',
                 type: "POST",
                 data:  new FormData(this),
                 contentType: false,
@@ -491,12 +472,11 @@
                 },
                 success: function(response)
                 {
-                    if(response.result_html != ''){
+                    if(response.success){
                         $('#report_list_container').empty();
-                        //$('#report_list_container').append(response.result_html);
-                        //$('#title').html('SMS | Radiology');
-                        toastr["success"]('Record save successfully!.');
-
+                        toastr["success"](response.message);
+                    }else{
+                        toastr["error"](response.message);
                     }
                 },
                 error: function(e)

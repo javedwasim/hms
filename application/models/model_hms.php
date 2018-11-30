@@ -1238,11 +1238,7 @@ class model_hms extends CI_Model {
 
     public function delete_vital_model($vitalId) {
         $query = $this->db->delete('vitals_sheettbl', array('vital_id' => $vitalId));
-        if ($query) {
-            echo "Vitals Record has been deleted successfully! " . $vitalId;
-        } else {
-            echo "Vitals Record deletion failed!";
-        }
+        return $this->db->affected_rows();
     }
 
     public function patient_counter() {
@@ -3229,6 +3225,10 @@ class model_hms extends CI_Model {
     }
     
     public function daily_report_insert($data) {
+        unset($data['hour']);
+        unset($data['minute']);
+        unset($data['meridian']);
+        unset($data['drp_seenby_officer']);
         return $this->db->insert('daily_reporttbl', $data);
     }
     public function blood_sugar_view($qs) {
@@ -3261,11 +3261,7 @@ class model_hms extends CI_Model {
     
     public function delete_blood_sugar_report($Id) {
         $query = $this->db->delete('blood_sugartbl', array('id' => $Id));
-        if ($query) {
-            echo "Vitals Record has been deleted successfully! " . $Id;
-        } else {
-            echo "Vitals Record deletion failed!";
-        }
+        return $this->db->affected_rows();
     }
 
     public function get_wards(){
@@ -3413,6 +3409,18 @@ class model_hms extends CI_Model {
     public function get_ot_ward(){
         $this->db->select('*');
         $this->db->from('otwardtbl');
+        $result = $this->db->get();
+        if($result) {
+            return $result->result_array();
+        } else {
+            return array();
+        }
+    }
+
+    public function get_patient_daily_report($id){
+        $this->db->select('*');
+        $this->db->from('daily_reporttbl');
+        $this->db->where('regNo',$id);
         $result = $this->db->get();
         if($result) {
             return $result->result_array();

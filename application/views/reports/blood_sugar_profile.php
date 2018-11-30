@@ -51,7 +51,7 @@
                         <label>MR# or Patient Name</label>
                         <form name="search-by-name" id="search-by-name" method="get"
                               action="#">
-                            <select class="patName-select form-control select2" name="search_by_cnic">
+                            <select class="patName-select form-control select2" name="search_by_cnic" id="daily_sugar_report">
                                 <option value="">Please select</option>
                                 <?php foreach ($patients as $patient): ?>
                                     <option value="<?php echo $patient['regNo']; ?>"<?php echo isset($filter)&&($filter == $patient['regNo'])?'selected':''; ?>>
@@ -242,7 +242,7 @@
         </div><!-- /.box-header -->
         <div class="box-body">
             <div class="row">
-                <div class="col-sm-12" >
+                <div class="col-sm-12" id="patient_sugar_report_list">
                     <table id="vitals-search"
                            class="table table-bordered table-hover dataTable"
                            role="grid" aria-describedby="example2_info">
@@ -365,12 +365,22 @@
 <!-- /.content -->
 <script>
     $(document).ready(function () {
+
+        $('.bs-datepicker').datepicker({
+            format: 'dd-mm-yyyy',
+            autohide:true,
+        });
+        $('#bs-date').datepicker({
+            format: 'dd-mm-yyyy',
+            autohide:true,
+        });
+
+
         $('.select2').select2();
 
         var isVisible = 0;
         $('.new-report').hide();
         $('.btn-new-report').on('click', function () {
-
             switch (isVisible) {
                 case 0:
                     $('.new-report').slideDown();
@@ -389,39 +399,5 @@
                     isVisible = 0;
             }
         });
-
-        $("#patient_report_form").on('submit',(function(e) {
-            e.preventDefault();
-            var patient_id = $('#patient_report_select').val();
-            $('#patient_id').val(patient_id);
-            var base_url = $('#base').val();
-            $.ajax({
-                url: base_url+'dashboard/patient_reports',
-                type: "POST",
-                data:  new FormData(this),
-                contentType: false,
-                cache: false,
-                processData:false,
-                beforeSend : function()
-                {
-                    $("#err").fadeOut();
-                },
-                success: function(response)
-                {
-                    if(response.result_html != ''){
-                        $('#report_list_container').empty();
-                        //$('#report_list_container').append(response.result_html);
-                        //$('#title').html('SMS | Radiology');
-                        toastr["success"]('Record save successfully!.');
-
-                    }
-                },
-                error: function(e)
-                {
-                    toastr["error"]('seem to be an error');
-                }
-            });
-        }));
-
     });
 </script>

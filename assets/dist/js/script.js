@@ -351,19 +351,19 @@ $(document.body).on('click', '#patient_report_btn', function(){
 });
 
 
-$(document.body).on('click', '.ahref', function(){
-    var base_url = $('#base').val();
-    $.ajax({
-        url: base_url + $(this).attr('data-href'),
-        cache: false,
-        success: function (response) {
-            if (response.result_html != '') {
-                $('.content-wrapper').empty();
-                $('.content-wrapper').append(response.result_html);
-            }
-        }
-    });
-});
+// $(document.body).on('click', '.ahref', function(){
+//     var base_url = $('#base').val();
+//     $.ajax({
+//         url: base_url + $(this).attr('data-href'),
+//         cache: false,
+//         success: function (response) {
+//             if (response.result_html != '') {
+//                 $('.content-wrapper').empty();
+//                 $('.content-wrapper').append(response.result_html);
+//             }
+//         }
+//     });
+// });
 
 
 $(document.body).on('click', '#patient_report_btn2', function(){
@@ -383,3 +383,248 @@ $(document.body).on('click', '#patient_report_btn2', function(){
         }
     });
 });
+
+$(document.body).on('change', '#daily_report_search', function(){
+    var base_url = $('#base').val();
+    var patient_id = $('#daily_report_search').val();
+    $.ajax({
+        url: base_url+'dashboard/daily_reports',
+        type: 'post',
+        data:{search_by_cnic:patient_id},
+        cache: false,
+        success: function(response) {
+            if(response.result_html != ''){
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+            }
+        }
+    });
+});
+
+$(document.body).on('change', '#daily_sugar_report', function(){
+    var base_url = $('#base').val();
+    var patient_id = $('#daily_sugar_report').val();
+    $.ajax({
+        url: base_url+'dashboard/blood_sugar',
+        type: 'post',
+        data:{search_by_cnic:patient_id},
+        cache: false,
+        success: function(response) {
+            if(response.result_html != ''){
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+            }
+        }
+    });
+});
+
+$(document.body).on('click', '.delete-blood-report', function(){
+    var tr = $(this).closest('tr');
+    var bsid = tr.find('.bsID').val();
+    var patient_id = $('#daily_sugar_report').val();
+    $.ajax({
+        url: base_url + "dashboard/delete_blood_sugar_report",
+        type: "post",
+        data: {bsId: bsid,patient_id:patient_id},
+        success: function (response) {
+            if(response.success){
+                $('#patient_sugar_report_list').empty();
+                $('#patient_sugar_report_list').append(response.result_html);
+                toastr["error"](response.message);
+            }else{
+                toastr["error"](response.message);
+            }
+        }
+    });
+});
+
+
+$(document.body).on('change', '#daily_vital_report', function(){
+    var base_url = $('#base').val();
+    var patient_id = $('#daily_vital_report').val();
+    $.ajax({
+        url: base_url+'dashboard/patient_vitals_sheet',
+        type: 'post',
+        data:{search_by_cnic:patient_id},
+        cache: false,
+        success: function(response) {
+            if(response.result_html != ''){
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+            }
+        }
+    });
+});
+
+$(document.body).on('click', '.delete-vital', function(){
+    var vitalId = $(this).attr('data-href');
+    var patient_id = $(this).attr('data-patientid');
+    $.ajax({
+        url: base_url + "dashboard/delete_vital",
+        type: "post",
+        data: {vitalId: vitalId,patient_id:patient_id},
+        success: function (response) {
+            if(response.success){
+                $('#vital_chart_report').empty();
+                $('#vital_chart_report').append(response.result_html);
+                toastr["error"](response.message);
+            }else{
+                toastr["error"](response.message);
+            }
+        }
+    });
+});
+
+$(document.body).on('click', '.vital-save', function(){
+    var tr = $(this).closest('tr');
+    var regno = $('#regsno').text();
+    var vitaldate = $('.datepicker-vital-rw').val();
+    var vitaltime = $('.timepicker-vital-rw').val();
+    var vitalId = $('#regisno').val();
+    var vitalbp1 = tr.find('#bp1').val();
+    var vitalbp2 = tr.find('#bp2').val();
+    var vitalpulse = tr.find('#pulse').val();
+    var vitaltemp = tr.find('#temp').val();
+    var vitalresp = tr.find('#resp').val();
+    var vitalheight = tr.find('#height').val();
+    var vitalweight = tr.find('#weight').val();
+    var vitalbmi = tr.find('#bmi').val();
+    var base_url = $('#base').val();
+    $.ajax({
+        url: base_url+"dashboard/save_vital_report",
+        type: "post",
+        data: {
+            regno: regno,
+            vitalId: vitalId,
+            vitaldate: vitaldate,
+            vitaltime: vitaltime,
+            vitalbp1: vitalbp1,
+            vitalbp2: vitalbp2,
+            vitalpulse: vitalpulse,
+            vitaltemp: vitaltemp,
+            vitalresp: vitalresp,
+            vitalheight: vitalheight,
+            vitalweight: vitalweight,
+            vitalbmi: vitalbmi
+
+        },
+        success: function (response) {
+            if(response.success){
+                $('#vital_chart_report').empty();
+                $('#vital_chart_report').append(response.result_html);
+                toastr["success"](response.message);
+            }else{
+                toastr["error"](response.message);
+            }
+        }
+    });
+
+});
+
+$(document.body).on('click', '.update-vital', function(){
+    var tr = $(this).closest('tr');
+    var regno = $('#regsno').text();
+    var vitalId = tr.find('.vitalID').val();
+    var vitaldate = $('.datepicker-vital').val();
+    var vitaltime = $('.timepicker-vital').val();
+    var vitalbp1 = tr.find('#bp1').val();
+    var vitalbp2 = tr.find('#bp2').val();
+    var vitalpulse = tr.find('#pulse').val();
+    var vitaltemp = tr.find('#temp').val();
+    var vitalresp = tr.find('#resp').val();
+    var vitalheight = tr.find('#height').val();
+    var vitalweight = tr.find('#weight').val();
+    var vitalbmi = tr.find('#bmi').val();
+    var base_url = $('#base').val();
+    $.ajax({
+        url: base_url+"dashboard/vital_update",
+        type: "post",
+        data: {
+            regno: regno,
+            vitalId: vitalId,
+            vitaldate: vitaldate,
+            vitaltime: vitaltime,
+            vitalbp1: vitalbp1,
+            vitalbp2: vitalbp2,
+            vitalpulse: vitalpulse,
+            vitaltemp: vitaltemp,
+            vitalresp: vitalresp,
+            vitalheight: vitalheight,
+            vitalweight: vitalweight,
+            vitalbmi: vitalbmi
+
+        },
+        success: function (reponse) {
+            toastr["success"]('Report has been updated successfully.');
+        }
+    });
+});
+
+$(document.body).on('click', '.update-blood-report', function(){
+    var tr = $(this).closest('tr');
+    var bsId = tr.find('.bsID').val();
+    var regno = tr.find('#regisno').val();
+    var bsdate = tr.find('.bs-datepicker').val();
+    var bsbsf = tr.find('#bsf').val();
+    var bshrbsf = tr.find('#hrbsf').val();
+    var bsprelunch = tr.find('#prelunch').val();
+    var bspostlunch = tr.find('#postlunch').val();
+    var bspredinner = tr.find('#predinner').val();
+    var bspostdinner = tr.find('#postdinner').val();
+    var base_url = $('#base').val();
+    $.ajax({
+        url: base_url+"dashboard/update_sugar_report",
+        type: "post",
+        data: {
+            regNo: regno,
+            bsid: bsId,
+            bsdate: bsdate,
+            bsbsf: bsbsf,
+            bshrbsf: bshrbsf,
+            bsprelunch: bsprelunch,
+            bspostlunch: bspostlunch,
+            bspredinner: bspredinner,
+            bspostdinner: bspostdinner
+
+        },
+        success: function (data) {
+            toastr["success"]('Report has been updated successfully.');
+        }
+    });
+});
+
+$(document.body).on('click', '.save-sugar-report', function(){
+    var tr = $(this).closest('tr');
+    var regno = $('#regsno').text();
+    var bsdate = $('#bs-date').val();
+    var bsbsf = $('#bs-bsf').val();
+    var bshrbsf = $('#bs-hrbsf').val();
+    var bsprelunch = tr.find('#bs-prelunch').val();
+    var bspostlunch = tr.find('#bs-postlunch').val();
+    var bspredinner = tr.find('#bs-predinner').val();
+    var bspostdinner = tr.find('#bs-postdinner').val();
+    var base_url = $('#base').val();
+    $.ajax({
+        url: base_url+"dashboard/save_bloodsugar_report",
+        type: "post",
+        data: {
+            regno: regno,
+            bsdate: bsdate,
+            bsbsf: bsbsf,
+            bshrbsf: bshrbsf,
+            bsprelunch: bsprelunch,
+            bspostlunch: bspostlunch,
+            bspredinner: bspredinner,
+            bspostdinner: bspostdinner
+        },
+        success: function (response) {
+            if(response.success){
+                toastr["success"](response.message);
+                $('#patient_sugar_report_list').empty();
+                $('#patient_sugar_report_list').append(response.result_html);
+            }
+
+        }
+    });
+});
+

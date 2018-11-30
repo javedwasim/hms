@@ -252,8 +252,6 @@ class dashboard extends CI_Controller {
 
     }
 
-
-
     public function patient_report($id){
         $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($id);
         $data['report_list'] = $this->model_hms->report_view($id);
@@ -376,86 +374,205 @@ class dashboard extends CI_Controller {
                 set_content_type($json);
             }
         }
-
-
     }
 
     public function daily_reports() {
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, VIEW_RADIOLOGY_SECTION);
         $data['patients'] = $this->model_hms->get_all_patients();
+        $data['filter'] = $this->input->post("search_by_cnic");
         if ($access_checker == 1) {
-            if (!empty($this->input->get("search_by_cnic"))) {
-                $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($this->input->get("search_by_cnic"));
-//                $data['report_list'] = $this->model_hms->report_view($this->input->get("search_by_cnic"));
-                if (!empty($this->input->post("btn-daily-report-submit"))) {
-                    $report['regNo'] = $this->input->get("search_by_cnic");
-                    $report['drp_date'] = $this->input->post("drp-date");
-                    $report['drp_time'] = $this->input->post('drp_time');
-                    $report['drp_doa'] = $this->input->post('drp_doa');
-                    $report['drp_co'] = $this->input->post('drp_co');
-                    $report['drp_ac'] = $this->input->post('drp_ac');
-                    $report['drp_pulse'] = $this->input->post('drp_pulse');
-                    $report['drp_bp'] = $this->input->post('drp_bp');
-                    $report['drp_rr'] = $this->input->post('drp_rr');
-                    $report['drp_temp'] = $this->input->post('drp_temp');
-                    $report['drp_wound'] = $this->input->post('drp_wound');
-                    $report['drp_resp'] = $this->input->post('drp_resp');
-
-                    $report['drp_dressing'] = $this->input->post('drp_dressing');
-                    $report['drp_git'] = $this->input->post('drp_git');
-                    $report['drp_cvs'] = $this->input->post('drp_cvs');
-                    $report['drp_cns'] = $this->input->post('drp_cns');
-
-                    $report['drp_intake'] = $this->input->post('drp_intake');
-                    $report['drp_output'] = $this->input->post('drp_output');
-                    $report['drp_pt_seen'] = $this->input->post('drp_seenby_officer');
-                    $report['drp_pgr'] = $this->input->post('drp_pgr');
-                    $report['drp_plan'] = $this->input->post('drp_plan');
-                    $report['drp_consultant'] = $this->input->post('drp_consultant');
-                    $query = $this->model_hms->daily_report_insert($report);
-                    if ($query) {
-                        redirect(base_url('dashboard/daily_reports/?search_by_cnic=' . $report['regNo']));
-                    }
-                }
-                $this->load->view('daily_report_page', $data);
-            }
-            if (empty($this->input->get()) || !empty($this->input->get('success') == "true")) {die('ddd');
-                $json['result_html']= $this->load->view('reports/daily_report_page',[],true);
-                if ($this->input->is_ajax_request()) {
-                    set_content_type($json);
-                }
-            }
-
+            $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($data['filter']);
+            $data['daily_report'] = $this->model_hms->get_patient_daily_report($data['filter']);
             $json['result_html']= $this->load->view('reports/daily_report_page',$data,true);
             if ($this->input->is_ajax_request()) {
                 set_content_type($json);
             }
-
         } else {
             $this->insufficient_privileges();
         }
     }
+
+
+    public function save_daily_report(){
+        $this->load->library('form_validation');
+        $this->load->helper('security');
+        $this->form_validation->set_rules('regNo', 'Patient', 'required|xss_clean');
+        $this->form_validation->set_rules('drp_date', 'Date', 'required|xss_clean');
+        $this->form_validation->set_rules('drp_rr', 'R.R', 'required|xss_clean');
+        $this->form_validation->set_rules('drp_bp', 'B.P', 'required|xss_clean');
+        $this->form_validation->set_rules('drp_pulse', 'Pulse', 'required|xss_clean');
+        $this->form_validation->set_rules('drp_temp', 'Temp', 'required|xss_clean');
+        if ($this->form_validation->run() == FALSE) {
+            $json['error'] = true;
+            $json['message'] = validation_errors();
+        } else{
+            $report = $this->input->post();
+            $result = $this->model_hms->daily_report_insert($report);
+            if($result){
+                $json['success'] = true;
+                $json['message'] = "Daily report save successfully!";
+            }else{
+                $json['error'] = false;
+                $json['message'] = "Seem to be an error!";
+            }
+
+        }
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
+        }
+
+    }
+
 
     public function blood_sugar() {
         $priv = $this->authentication->read('priv');
         $access_checker = $this->model_hms->access_checker($priv, VIEW_RADIOLOGY_SECTION);
         $data['patients'] = $this->model_hms->get_all_patients();
+        $data['filter'] = $this->input->post("search_by_cnic");
         if ($access_checker == 1) {
-            if (!empty($this->input->get("search_by_cnic"))) {
-                $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($this->input->get("search_by_cnic"));
-                $data['sugar_list'] = $this->model_hms->blood_sugar_view($this->input->get("search_by_cnic"));
-                $this->load->view('blood_sugar_profile', $data);
-            }else{
-                $json['result_html']=$this->load->view('reports/blood_sugar_profile',$data,true);
-                if ($this->input->is_ajax_request()) {
-                    set_content_type($json);
-                }
+            $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($this->input->post("search_by_cnic"));
+            $data['sugar_list'] = $this->model_hms->blood_sugar_view($this->input->post("search_by_cnic"));
+            $json['result_html']=$this->load->view('reports/blood_sugar_profile', $data,true);
+            if ($this->input->is_ajax_request()) {
+                set_content_type($json);
             }
         } else {
             $this->insufficient_privileges();
         }
     }
+
+    public function save_bloodsugar_report() {
+        $bregno = $this->input->post("regno");
+        $bsdate = date("Y-m-d", strtotime($this->input->post("bsdate")));
+        $bsbsf = $this->input->post("bsbsf");
+        $bshrbsf = $this->input->post("bshrbsf");
+        $bsprelunch = $this->input->post("bsprelunch");
+        $bspostlunch = $this->input->post("bspostlunch");
+        $bspredinner = $this->input->post("bspredinner");
+        $bspostdinner = $this->input->post("bspostdinner");
+        $bsreport = array(
+            'regNo' => $bregno,
+            'bs_date' => $bsdate,
+            'bs_bsf' => $bsbsf,
+            'bs_hrbsf' => $bshrbsf,
+            'bs_pre_lunch' => $bsprelunch,
+            'bs_post_lunch' => $bspostlunch,
+            'bs_pre_dinner' => $bspredinner,
+            'bs_post_dinner' => $bspostdinner
+        );
+        $result = $this->model_hms->save_blood_sugar_report($bsreport);
+
+        if($result){
+            $json['success'] = true;
+            $json['message'] = "Report has been saved successfully.";
+            $data['sugar_list'] = $this->model_hms->blood_sugar_view($this->input->post("regno"));
+            $json['result_html']=$this->load->view('reports/daily_sugar_chart', $data,true);
+        }else{
+            $json['error'] = true;
+            $json['message'] = "seem to be an error";
+        }
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
+        }
+
+    }
+
+    public function delete_blood_sugar_report() {
+        $bsId = $this->input->post('bsId');
+        $patient_id = $this->input->post('patient_id');
+        $result = $this->model_hms->delete_blood_sugar_report($bsId);
+        if ($result) {
+            $json['success'] = true;
+            $json['message'] = 'Report has been deleted successfully.';
+        }else{
+            $json['error'] = true;
+            $json['message'] = 'Seem to be an error.';
+        }
+        $data['sugar_list'] = $this->model_hms->blood_sugar_view($patient_id);
+        $json['result_html']=$this->load->view('reports/daily_sugar_chart', $data,true);
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
+        }
+    }
+
+    public function patient_vitals_sheet() {
+        $priv = $this->authentication->read('priv');
+        $access_checker = $this->model_hms->access_checker($priv, VIEW_RADIOLOGY_SECTION); //1, can_book_ot
+        $data['patients'] = $this->model_hms->get_all_patients();
+        if ($access_checker == 1) {
+            $data['filter'] = $this->input->post("search_by_cnic");
+            $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($data['filter']);
+            $data['vitals_list'] = $this->model_hms->vitals_view($data['filter']);
+            $json['result_html']=$this->load->view('reports/patient_vitals_sheet',$data,true);
+            if ($this->input->is_ajax_request()) {
+                set_content_type($json);
+            }
+        } else {
+            $this->insufficient_privileges();
+        }
+    }
+
+
+    public function save_vital_report() {
+        $vitalregno = $this->input->post("regno");
+        $vitalsdatetime = $this->input->post("vitaldate") . " " . $this->input->post("vitaltime");
+        $vitalId = $this->input->post("vitalId");
+        $vitalsbp = $this->input->post("vitalbp1") . " - " . $this->input->post("vitalbp2");
+        $vitalspulse = $this->input->post("vitalpulse");
+        $vitalsheight = $this->input->post("vitalheight");
+        $vitalsweight = $this->input->post("vitalweight");
+        $vitalsbmi = $this->input->post("vitalbmi");
+        $vitalstemp = $this->input->post("vitaltemp");
+        $vitalsresp = $this->input->post("vitalresp");
+        $vitals = array(
+            'regNo' => $vitalregno,
+            'vital_timestamp' => $vitalsdatetime,
+            'vital_bp' => $vitalsbp,
+            'vital_pulse' => $vitalspulse,
+            'vital_temp' => $vitalstemp,
+            'vital_resp_rate' => $vitalsresp,
+            'vital_height' => $vitalsheight,
+            'vital_weight' => $vitalsweight,
+            'vital_bmi' => $vitalsbmi
+        );
+        $result = $this->model_hms->save_vital($vitals);
+        if($result){
+            $json['success'] = true;
+            $json['message'] = "Report has been saved successfully.";
+            $data['vitals_list'] = $this->model_hms->vitals_view($vitalregno);
+            $json['result_html']=$this->load->view('reports/daily_vital_chart',$data,true);
+        }else{
+            $json['error'] = true;
+            $json['message'] = "seem to be an error";
+        }
+
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
+        }
+    }
+
+    public function delete_vital() {
+
+        $vitalId = $this->input->post('vitalId');
+        $patient_id = $this->input->post('patient_id');
+
+        $result = $this->model_hms->delete_vital_model($vitalId);
+        if ($result) {
+            $json['success'] = true;
+            $json['message'] = 'Report has been deleted successfully.';
+
+        }else{
+            $json['error'] = true;
+            $json['message'] = 'Seem to be an error.';
+        }
+        $data['vitals_list'] = $this->model_hms->vitals_view($patient_id);
+        $json['result_html']=$this->load->view('reports/daily_vital_chart',$data,true);
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
+        }
+    }
+
 
     public function insert_discharge_db() {
         $udata['regNo'] = $this->input->post('regNo');
@@ -1760,12 +1877,7 @@ class dashboard extends CI_Controller {
         }
     }
 
-    public function delete_vital() {
-        $res = $this->model_hms->delete_vital_model($this->input->post('vitalId'));
-        if ($res) {
-            echo $res;
-        }
-    }
+
 
     public function wards_list() {
         $priv = $this->authentication->read('priv');
@@ -1960,44 +2072,7 @@ class dashboard extends CI_Controller {
         }
     }
 
-    public function patient_vitals_sheet() {
-        $priv = $this->authentication->read('priv');
-        $access_checker = $this->model_hms->access_checker($priv, VIEW_RADIOLOGY_SECTION); //1, can_book_ot
-        $data['patients'] = $this->model_hms->get_all_patients();
-        if ($access_checker == 1) {
-            if (!empty($this->input->get("search_by_cnic"))) {
-                $data['patient_list'] = $this->model_hms->search_result_by_cnic_chart($this->input->get("search_by_cnic"));
-                $data['vitals_list'] = $this->model_hms->vitals_view($this->input->get("search_by_cnic"));
-                if (!empty($this->input->post("btn-vitals-submit"))) {
 
-                    $vitals['vital_timestamp'] = $this->input->post("vitals-date") . " " . $this->input->post("vitals-time");
-                    $vitals['vital_bp'] = "SYS: " . $this->input->post("vitals-sys-bp") . " - " . "DIA: " . $this->input->post("vitals-dia-bp");
-                    $vitals['vital_resp_rate'] = $this->input->post("vitals-resp");
-                    $vitals['vital_height'] = $this->input->post("vitals-height");
-                    $vitals['vital_weight'] = $this->input->post("vitals-weight");
-                    $vitals['vital_bmi'] = $this->input->post("vitals-bmi");
-                    $vitals['vital_pain'] = $this->input->post("vitals-pain");
-                    $vitals['vital_temp'] = $this->input->post("vitals-temp");
-                    $vitals['vital_pulse'] = $this->input->post("vitals-pulse-rate");
-                    $vitals['regNo'] = $this->input->get("search_by_cnic");
-                    $query = $this->model_hms->vitals_insert($vitals);
-                    if ($query) {
-                        redirect(base_url('dashboard/patient_vitals_sheet/?search_by_cnic=' . $vitals['regNo']));
-                    }
-                }
-                $this->load->view('patient_vitals_sheet', $data);
-            }
-            if (empty($this->input->get()) || !empty($this->input->get('success') == "true")) {
-                $this->load->view('patient_vitals_sheet',$data,true);
-            }
-            $json['result_html']=$this->load->view('reports/patient_vitals_sheet',$data,true);
-            if ($this->input->is_ajax_request()) {
-                set_content_type($json);
-            }
-        } else {
-            $this->insufficient_privileges();
-        }
-    }
 
     public function ot_delete() {
         $ot_id = $this->input->post('ot_id');
@@ -3330,34 +3405,7 @@ class dashboard extends CI_Controller {
             $this->insufficient_privileges();
         }
     }
-    public function save_vital_report() { {
-            $vitalregno = $this->input->post("regno");
-            $vitalsdatetime = $this->input->post("vitaldate") . " " . $this->input->post("vitaltime");
-            $vitalId = $this->input->post("vitalId");
-            $vitalsbp = $this->input->post("vitalbp1") . " - " . $this->input->post("vitalbp2");
-            $vitalspulse = $this->input->post("vitalpulse");
-            $vitalsheight = $this->input->post("vitalheight");
-            $vitalsweight = $this->input->post("vitalweight");
-            $vitalsbmi = $this->input->post("vitalbmi");
-            $vitalstemp = $this->input->post("vitaltemp");
-            $vitalsresp = $this->input->post("vitalresp");
-            $vitals = array(
-                'regNo' => $vitalregno,
-                'vital_timestamp' => $vitalsdatetime,
-                'vital_bp' => $vitalsbp,
-                'vital_pulse' => $vitalspulse,
-                'vital_temp' => $vitalstemp,
-                'vital_resp_rate' => $vitalsresp,
-                'vital_height' => $vitalsheight,
-                'vital_weight' => $vitalsweight,
-                'vital_bmi' => $vitalsbmi
-            );
-            $query = $this->model_hms->save_vital($vitals);
-            if ($query) {
-                echo $query;
-            }
-        }
-    }
+
 
     public function vital_update() {
         $vitalsdatetime = $this->input->post("vitaldate") . " " . $this->input->post("vitaltime");
@@ -3508,30 +3556,7 @@ class dashboard extends CI_Controller {
 
 
 
-    public function save_bloodsugar_report() {
-        $bregno = $this->input->post("regno");
-        $bsdate = date("Y-m-d", strtotime($this->input->post("bsdate")));
-        $bsbsf = $this->input->post("bsbsf");
-        $bshrbsf = $this->input->post("bshrbsf");
-        $bsprelunch = $this->input->post("bsprelunch");
-        $bspostlunch = $this->input->post("bspostlunch");
-        $bspredinner = $this->input->post("bspredinner");
-        $bspostdinner = $this->input->post("bspostdinner");
-        $bsreport = array(
-            'regNo' => $bregno,
-            'bs_date' => $bsdate,
-            'bs_bsf' => $bsbsf,
-            'bs_hrbsf' => $bshrbsf,
-            'bs_pre_lunch' => $bsprelunch,
-            'bs_post_lunch' => $bspostlunch,
-            'bs_pre_dinner' => $bspredinner,
-            'bs_post_dinner' => $bspostdinner
-        );
-        $query = $this->model_hms->save_blood_sugar_report($bsreport);
-        if ($query) {
-            echo $query;
-        }
-    }
+
 
     public function update_sugar_report() {
         $bsid = $this->input->post("bsid");
@@ -3571,12 +3596,7 @@ class dashboard extends CI_Controller {
         $this->load->view('print_sugar_report', $data);
     }
     
-    public function delete_blood_sugar_report() {
-        $res = $this->model_hms->delete_blood_sugar_report($this->input->post('bsId'));
-        if ($res) {
-            echo $res;
-        }
-    }
+
     
     public function print_all_reports(){
         $this->load->library('ciqrcode');

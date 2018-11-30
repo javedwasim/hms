@@ -53,7 +53,7 @@
                         <label>MR# or Patient Name</label>
                         <form name="search-by-name" id="search-by-name" method="get"
                               action="#">
-                            <select class="patName-select form-control select2" name="search_by_cnic">
+                            <select class="patName-select form-control select2" name="search_by_cnic" id="daily_vital_report">
                                 <option value="">Please select</option>
                                 <?php foreach ($patients as $patient): ?>
                                     <option value="<?php echo $patient['regNo']; ?>"<?php echo isset($filter)&&($filter == $patient['regNo'])?'selected':''; ?>>
@@ -246,7 +246,7 @@
             </div><!-- /.box-header -->
             <div class="box-body">
                 <div class="row">
-                    <div class="col-sm-12" >
+                    <div class="col-sm-12" id="vital_chart_report">
                         <table id="vitals-search"
                                class="table table-bordered table-hover dataTable"
                                role="grid" aria-describedby="example2_info">
@@ -329,7 +329,8 @@
                                         $date = date('d-m-Y', strtotime($date));
                                         $time = date('h:i:s', strtotime($time));
                                         ?>
-                                        <td><div class="input-group date bootstrap-timepicker timepicker">
+                                        <td>
+                                            <div class="input-group date bootstrap-timepicker timepicker">
 
                                                 <div class="col-md-12" style="padding: 0;">
                                                     <input type="text" class="form-control pull-right datepicker-vital" id="" name="vitals-date" autocomplete="off" placeholder="Set Date" style="width:100%" value="<?php echo $date; ?>">
@@ -337,7 +338,8 @@
                                                 <div class="col-md-12" style="padding: 0;">
                                                     <input type="text" class="form-control pull-right timepicker-vital" id="" name="vitals-time" placeholder="Set Time" style="width:100%" value="<?php echo $time; ?>">
                                                 </div>
-                                            </div></td>
+                                            </div>
+                                        </td>
                                         <td>
                                             <?php
                                             $bp = $v_key['vital_bp'];
@@ -357,7 +359,9 @@
                                         <td><input type="text" value="<?php echo $v_key['vital_weight']; ?>" class="editdata" id="weight" /></td>
                                         <td><input type="text" value="<?php echo $v_key['vital_bmi']; ?>" class="editdata" id="bmi" /></td>
                                         <td>
-                                            <button class="btn btn-default delete-vital">
+                                            <button class="btn btn-default delete-vital"
+                                                data-href="<?php echo $v_key['vital_id']; ?>"
+                                                data-patientid="<?php echo $v_key['regNo']; ?>">
                                                 <i class="fa fa-trash" aria-hidden="true"></i>
                                             </button>
                                             <br />
@@ -401,7 +405,6 @@
 
                             </tfoot>
                         </table>
-
                     </div>
                 </div>
             </div>
@@ -411,7 +414,18 @@
 </section>
 <!-- /.content -->
 <script>
+
     $(document).ready(function () {
+        $(".cursre-onload").focus();
+
+        $('.datepicker-vital-rw').datepicker({
+            format: 'd-m-yyyy',
+            autohide: true,
+        });
+        $('.timepicker-vital-rw').timepicker({
+            defaultTime: false
+        });
+
         $('.select2').select2();
 
         var isVisible = 0;
@@ -436,39 +450,6 @@
                     isVisible = 0;
             }
         });
-
-        $("#patient_report_form").on('submit',(function(e) {
-            e.preventDefault();
-            var patient_id = $('#patient_report_select').val();
-            $('#patient_id').val(patient_id);
-            var base_url = $('#base').val();
-            $.ajax({
-                url: base_url+'dashboard/patient_reports',
-                type: "POST",
-                data:  new FormData(this),
-                contentType: false,
-                cache: false,
-                processData:false,
-                beforeSend : function()
-                {
-                    $("#err").fadeOut();
-                },
-                success: function(response)
-                {
-                    if(response.result_html != ''){
-                        $('#report_list_container').empty();
-                        //$('#report_list_container').append(response.result_html);
-                        //$('#title').html('SMS | Radiology');
-                        toastr["success"]('Record save successfully!.');
-
-                    }
-                },
-                error: function(e)
-                {
-                    toastr["error"]('seem to be an error');
-                }
-            });
-        }));
 
     });
 </script>

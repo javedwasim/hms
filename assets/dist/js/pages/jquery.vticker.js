@@ -86,6 +86,7 @@
     nextUsePause: function() {
       var options, state;
       state = $(this).data('state');
+      if(state.options='') return;  // added this line
       options = state.options;
       if (state.isPaused || internal.hasSingleItem(state)) {
         return;
@@ -96,7 +97,7 @@
     },
       startInterval: function() {
           var state = $(this).data('state');
-          if(!state) return;  // added this line
+          if(!state.options) return;  // added this line
           var options = state.options;
           var initThis = this;
           state.intervalId = setInterval(function(){
