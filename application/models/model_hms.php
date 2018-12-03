@@ -2018,7 +2018,26 @@ class model_hms extends CI_Model {
     }
 
     public function insert_expense($data) {
-        $this->db->insert('hospital_expensetbl', $data);
+        unset($data['total-rows']);
+        unset($data['hour']);
+        unset($data['minute']);
+        unset($data['meridian']);
+
+        for($j=0;$j<count($data['expCategNo']);$j++){
+            $udata = array(
+               'expCategNo' => $data['expCategNo'][$j],
+               'expDateString' => date('Y-m-d',strtotime($data['expDateString'][$j])),
+               'expTimeString' => $data['expTimeString'][$j],
+               'expDescription' => $data['expDescription'][$j],
+               'expAmount' => $data['expAmount'][$j],
+               'expAddBy' => $data['expAddBy'],
+               'expTime' => date('Y-m-d',strtotime($data['expDateString'][$j])),
+               'expTime' => $data['expTimeString'][$j],
+            );
+            $this->db->insert('hospital_expensetbl', $udata);
+        }
+
+        return true;
     }
 
     public function get_expense_list_by_daterange($sdate, $edate) {

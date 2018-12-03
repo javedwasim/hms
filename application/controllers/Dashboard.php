@@ -553,7 +553,6 @@ class dashboard extends CI_Controller {
     }
 
     public function delete_vital() {
-
         $vitalId = $this->input->post('vitalId');
         $patient_id = $this->input->post('patient_id');
 
@@ -570,6 +569,43 @@ class dashboard extends CI_Controller {
         $json['result_html']=$this->load->view('reports/daily_vital_chart',$data,true);
         if ($this->input->is_ajax_request()) {
             set_content_type($json);
+        }
+    }
+
+    public function add_expense() {
+        $priv = $this->authentication->read('priv');
+        $access_checker = $this->model_hms->access_checker($priv, VIEW_ACCOUNTS);
+        $data['expenses'] = $this->model_hms->get_all_expenses();
+        if ($access_checker == 1) {
+            $this->load->library('form_validation');
+            $this->load->helper('security');
+            $this->form_validation->set_rules('expCategNo[]', 'Expense Category', 'required|xss_clean');
+            $this->form_validation->set_rules('expDateString[]', 'Date', 'required|xss_clean');
+            $this->form_validation->set_rules('expTimeString[]', 'Time', 'required|xss_clean');
+            $this->form_validation->set_rules('expDescription[]', 'Description', 'required|xss_clean');
+            $this->form_validation->set_rules('expAmount[]', 'Amount', 'required|xss_clean');
+            if ($this->form_validation->run() == FALSE) {
+                $json['error'] = true;
+                $json['message'] = validation_errors();
+            }else{
+                $udata = $this->input->post();
+                $udata['expAddBy'] = $this->authentication->read('identifier');
+                $result = $this->model_hms->insert_expense($udata);
+                if($result){
+                    $json['success'] = true;
+                    $json['message'] = "Expense save successfully.";
+                }else{
+                    $json['error'] = true;
+                    $json['message'] = "Seem to be an error.";
+                }
+
+            }
+            $json['result_html'] = $this->load->view('inventory/add_expense',$data,true);
+            if ($this->input->is_ajax_request()) {
+                set_content_type($json);
+            }
+        } else {
+            $this->insufficient_privileges();
         }
     }
 
@@ -2451,39 +2487,7 @@ class dashboard extends CI_Controller {
         }
     }
 
-    public function add_expense() {
-        $priv = $this->authentication->read('priv');
-        $access_checker = $this->model_hms->access_checker($priv, VIEW_ACCOUNTS);
-        if ($access_checker == 1) {
-            if (!empty($this->input->post("expense_category_no0"))) {
-                $rows = $this->input->post("total-rows");
-                for ($i = 0; $i <= $rows; $i++) {
-                    if (!empty($this->input->post("expense_category_no" . $i))) {
-                        $udata['expCategNo'] = $this->input->post("expense_category_no" . $i);
-                        $datestring = $this->input->post("expense_date" . $i);
-                        $udata['expDateString'] = $datestring;
-                        $timestring = $this->input->post("expense_time" . $i);
-                        $udata['expTimeString'] = $timestring;
-                        $udata['expDescription'] = $this->input->post("expense_description" . $i);
-                        $udata['expAmount'] = $this->input->post("expense_amount" . $i);
-                        $udata['expAddBy'] = $this->authentication->read('identifier');
-                        $new_date = strtotime($datestring);
-                        $new_time = strtotime($timestring);
-                        $udata['expDate'] = date('Y-m-d', $new_date);
-                        $udata['expTime'] = date('H:i:s', $new_time);
 
-                        $this->model_hms->insert_expense($udata);
-                    }
-                }
-                $data['success'] = "true";
-                $this->load->view('add_expense', $data);
-            } else {
-                $this->load->view('add_expense');
-            }
-        } else {
-            $this->insufficient_privileges();
-        }
-    }
 
     public function search_expense_category() {
         if (!empty($this->input->get("search_expense_category_no"))) {
