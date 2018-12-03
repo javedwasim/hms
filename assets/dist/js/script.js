@@ -459,6 +459,7 @@ $(document.body).on('change', '#daily_vital_report', function(){
 $(document.body).on('click', '.delete-vital', function(){
     var vitalId = $(this).attr('data-href');
     var patient_id = $(this).attr('data-patientid');
+    var base_url = $('#base').val();
     $.ajax({
         url: base_url + "dashboard/delete_vital",
         type: "post",
@@ -627,4 +628,50 @@ $(document.body).on('click', '.save-sugar-report', function(){
         }
     });
 });
+
+$(document.body).on('click', '.exp-update-btn', function(){
+    var base_url = $('#base').val();
+    var expense_no = $(this).attr('data-href');
+    $.ajax({
+        url :  base_url+'dashboard/edit_expense',
+        type: 'get',
+        data: {expense_no:expense_no},
+        cache: false,
+        success: function(response) {
+            if (response.result_html != '') {
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+            } else {
+                toastr["error"](response.message);
+            }
+        }
+    });
+    return false;
+});
+
+$(document.body).on('click', '.delete-exp-row', function(){
+    var base_url = $('#base').val();
+    var exp_id = $('#delete_exp_id').val();
+    $.ajax({
+        url :  base_url+'dashboard/exp_delete',
+        type: 'post',
+        data: {exp_id:exp_id},
+        cache: false,
+        success: function(response) {
+            if (response.success) {
+                $( ".modal-backdrop" ).remove();
+                $('#exp-delete-modal').modal('hide');
+                $('.content-wrapper').empty();
+                $('.content-wrapper').append(response.result_html);
+            } else {
+                toastr["error"](response.message);
+            }
+        }
+    });
+    return false;
+});
+
+
+
+
 

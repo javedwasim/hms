@@ -628,6 +628,63 @@ class dashboard extends CI_Controller {
         }
     }
 
+    public function edit_expense() {
+        $priv = $this->authentication->read('priv');
+        $access_checker = $this->model_hms->access_checker($priv, VIEW_ACCOUNTS);
+        if ($access_checker == 1) {
+            if (!empty($this->input->get("expense_no"))) {
+                $data['expense_list'] = $this->model_hms->get_expense_by_id($this->input->get("expense_no"));
+                $data['category_list'] = $this->model_hms->get_category_list();
+                $json['result_html'] = $this->load->view('inventory/edit_expense', $data,true);
+                if ($this->input->is_ajax_request()) {
+                    set_content_type($json);
+                }
+            }
+        } else {
+            $this->insufficient_privileges();
+        }
+    }
+
+    public function exp_delete() {
+        $data = $this->input->post();
+        $result = $this->model_hms->delete_exp($data['exp_id']);
+        if($result){
+            $json['success'] = true;
+            $json['message'] = "Expense deleted successfully.";
+        }else{
+            $json['error'] = true;
+            $json['message'] = "Seem to be an error.";
+        }
+        $json['result_html'] = $this->load->view('inventory/view_expense',$data,true);
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
+        }
+    }
+
+    public function update_expense(){
+        $expno = $this->input->post("expense_no");
+        $category = $this->input->post("expense_category_no");
+        $datestring = $this->input->post("expense_date");
+        $timestring = $this->input->post("expense_time");
+        $description = $this->input->post("expense_description");
+        $amount = $this->input->post("expense_amount");
+        $new_date = strtotime($datestring);
+        $new_time = strtotime($timestring);
+        $nowdate = date('Y-m-d', $new_date);
+        $nowtime = date('H:i:s', $new_time);
+        $result = $this->model_hms->update_expense_by_no($expno, $category, $datestring, $timestring, $description, $amount, $nowdate, $nowtime);
+        if ($result) {
+            $json['success'] = true;
+            $json['message'] = 'Expense updated successfully!.';
+        }else{
+            $json['error'] = true;
+            $json['message'] = 'Seem to be an error.';
+        }
+        if ($this->input->is_ajax_request()) {
+            set_content_type($json);
+        }
+    }
+
 
     public function insert_discharge_db() {
         $udata['regNo'] = $this->input->post('regNo');
@@ -2515,45 +2572,6 @@ class dashboard extends CI_Controller {
         if (empty($this->input->get("search_expense_category_no"))) {
             $this->model_hms->ajax_search_category_by_no($this->input->get("search_expense_category_no"));
         }
-    }
-
-
-
-    public function edit_expense() {
-        $priv = $this->authentication->read('priv');
-        $access_checker = $this->model_hms->access_checker($priv, VIEW_ACCOUNTS);
-        if ($access_checker == 1) {
-            if (!empty($this->input->get("expense_no"))) {
-                $data['expense_list'] = $this->model_hms->get_expense_by_id($this->input->get("expense_no"));
-                $data['category_list'] = $this->model_hms->get_category_list();
-                $this->load->view('edit_expense', $data);
-            } elseif (!empty($this->input->post("expense_category_no"))) {
-                $expno = $this->input->post("expense_no");
-                $category = $this->input->post("expense_category_no");
-                $datestring = $this->input->post("expense_date");
-                $timestring = $this->input->post("expense_time");
-                $description = $this->input->post("expense_description");
-                $amount = $this->input->post("expense_amount");
-                $new_date = strtotime($datestring);
-                $new_time = strtotime($timestring);
-                $nowdate = date('Y-m-d', $new_date);
-                $nowtime = date('H:i:s', $new_time);
-                $result = $this->model_hms->update_expense_by_no($expno, $category, $datestring, $timestring, $description, $amount, $nowdate, $nowtime);
-                if ($result) {
-                    $data['update_success'] = "true";
-                    $this->load->view('view_expense', $data);
-                }
-            } else {
-                $this->load->view('view_expense');
-            }
-        } else {
-            $this->insufficient_privileges();
-        }
-    }
-
-    public function exp_delete() {
-        $exp_id = $this->input->post('exp_id');
-        $this->model_hms->delete_exp($exp_id);
     }
 
     public function exp_update() {

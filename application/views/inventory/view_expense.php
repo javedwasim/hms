@@ -131,7 +131,7 @@
                                                     <td style="display: flex;">
                                                         <a class="exp-update-btn"
                                                            data-toggle="modal"
-                                                           href="<?php echo base_url('dashboard/edit_expense/') . "?expense_no=" . $e_key['expNo']; ?>">
+                                                           data-href="<?php echo $e_key['expNo']; ?>">
                                                             <button type="button"
                                                                     class="btn btn-default ">
                                                                 <i
@@ -140,6 +140,7 @@
                                                             </button>
                                                         </a>&nbsp;
                                                         <button type="button"
+                                                                data-href = "<?php echo $e_key['expNo']; ?>"
                                                                 class="btn btn-default exp-delete-submit-btn">
                                                             <i class="fa fa-ban"
                                                                aria-hidden="true"></i>
@@ -182,26 +183,27 @@
             </div>
         </div>
     <?php } ?>
-
-    <div class="modal fade" tabindex="-1" role="dialog" id="exp-delete-modal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Confirmation Message</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Do you want to delete the expense?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn bg-default nodelete-exp-row">No</button>
-                    <button type="button" class="btn bg-blue delete-exp-row">Yes</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
 </section>
+<!-- /.content -->
+<div class="modal fade" tabindex="-1" role="dialog" id="exp-delete-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Confirmation Message</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="delete_exp_id" id="delete_exp_id">
+                <p>Do you want to delete the expense?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-default nodelete-exp-row" data-dismiss="modal">No</button>
+                <button type="button" class="btn bg-blue delete-exp-row">Yes</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <!-- /.content -->
 <script>
     $(document).ready(function () {
@@ -232,6 +234,13 @@
             });
 
             //$('#search-expense-by-date').submit();
+        });
+
+        var exp_id;
+        $('.exp-delete-submit-btn').click(function () {
+            var expense_id =  $(this).attr('data-href');
+            $('#delete_exp_id').val(expense_id);
+            $('#exp-delete-modal').modal('show');
         });
     });
 </script>

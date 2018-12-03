@@ -2093,12 +2093,8 @@ class model_hms extends CI_Model {
     }
 
     public function delete_exp($exp_id) {
-        $query = $this->db->delete('hospital_expensetbl', array('expNo' => $exp_id));
-        if ($query) {
-            echo "Successfully!";
-        } else {
-            echo "Failed!";
-        }
+        $this->db->delete('hospital_expensetbl', array('expNo' => $exp_id));
+        return $this->db->affected_rows();
     }
 
     public function update_print_exp($expno) {
