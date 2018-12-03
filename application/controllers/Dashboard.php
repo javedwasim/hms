@@ -609,6 +609,25 @@ class dashboard extends CI_Controller {
         }
     }
 
+    public function view_expense() {
+        $priv = $this->authentication->read('priv');
+        $access_checker = $this->model_hms->access_checker($priv, VIEW_ACCOUNTS);
+        if ($access_checker == 1) {
+            $data = $this->input->post();
+            if(isset($data['start_date'])){
+                $data["formdate"] = $data["start_date"];
+                $data["todate"] = $data["end_date"];
+                $data['expense_list'] = $this->model_hms->get_expense_list_by_daterange($data["start_date"], $data["end_date"]);
+            }
+            $json['result_html'] = $this->load->view('inventory/view_expense',$data,true);
+            if ($this->input->is_ajax_request()) {
+                set_content_type($json);
+            }
+        } else {
+            $this->insufficient_privileges();
+        }
+    }
+
 
     public function insert_discharge_db() {
         $udata['regNo'] = $this->input->post('regNo');
@@ -2498,24 +2517,7 @@ class dashboard extends CI_Controller {
         }
     }
 
-    public function view_expense() {
-        $priv = $this->authentication->read('priv');
-        $access_checker = $this->model_hms->access_checker($priv, VIEW_ACCOUNTS);
-        if ($access_checker == 1) {
-            if (!empty($this->input->post("start_date"))) {
-                $fromdate = $this->input->post("start_date");
-                $todate = $this->input->post("end_date");
-                $data['formdate'] = $fromdate;
-                $data['todate'] = $todate;
-                $data['expense_list'] = $this->model_hms->get_expense_list_by_daterange($fromdate, $todate);
-                $this->load->view('view_expense', $data);
-            } else {
-                $this->load->view('view_expense');
-            }
-        } else {
-            $this->insufficient_privileges();
-        }
-    }
+
 
     public function edit_expense() {
         $priv = $this->authentication->read('priv');

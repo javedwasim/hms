@@ -2031,7 +2031,7 @@ class model_hms extends CI_Model {
                'expDescription' => $data['expDescription'][$j],
                'expAmount' => $data['expAmount'][$j],
                'expAddBy' => $data['expAddBy'],
-               'expTime' => date('Y-m-d',strtotime($data['expDateString'][$j])),
+               'expDate' => date('Y-m-d',strtotime($data['expDateString'][$j])),
                'expTime' => $data['expTimeString'][$j],
             );
             $this->db->insert('hospital_expensetbl', $udata);
@@ -2046,6 +2046,7 @@ class model_hms extends CI_Model {
                 ->where('expDate <=', $edate)
                 ->order_by('expDate asc, expTime asc')
                 ->get('hospital_expensetbl');
+       //echo $this->db->last_query(); die();
         return $query->result_array();
     }
 
